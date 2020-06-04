@@ -1,0 +1,47 @@
+{
+  "name": "pepup-automation-gui",
+  "version": "1.0.0",
+  "description": "pepup automation GUI",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@types/config": "0.0.36",
+    "@types/gapi.client.drive": "^3.0.4",
+    "@types/koa": "^2.11.3",
+    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-ejs": "^4.2.2",
+    "@types/koa-json": "^2.0.18",
+    "@types/koa-logger": "^3.1.1",
+    "@types/koa-router": "^7.4.1",
+    "@types/node": "^14.0.1",
+    "@types/puppeteer": "^2.1.0",
+    "axios": "^0.19.2",
+    "config": "^3.3.1",
+    "googleapis": "^39.2.0",
+    "koa": "^2.11.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-ejs": "^4.3.0",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^8.0.8",
+    "puppeteer": "^3.0.4",
+    "puppeteer-core": "^3.0.4",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon",
+    "build": "tsc",
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gizumon/pepup-automation-gui.git"
+  },
+  "author": "tomoatsu.sekikawa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gizumon/pepup-automation-gui/issues"
+  },
+  "homepage": "https://github.com/gizumon/pepup-automation-gui#readme"
+}
