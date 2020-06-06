@@ -5,7 +5,7 @@ import logger from "koa-logger";
 import json from "koa-json";
 
 import bodyParser from "koa-bodyparser";
-import env from 'config';
+import { config } from "node-config-ts";
 
 import Senario from './cases/scenario';
 import ValidationService from './services/validationService';
@@ -16,7 +16,7 @@ const validation = new ValidationService();
 
 const app = new Koa();
 const router = new Router();
-const PORT = env.get('service.port');
+const PORT = config.service.port;
 
 /** Middlewares */
 app.use(json());
@@ -45,6 +45,9 @@ router.get('/', async (ctx: Koa.Context, next: () => Promise<any>) => {
 
 router.post( '/regist', async (ctx: Koa.Context, next: () => Promise<any>) => {
     const data = ctx.request.body;
+    console.log(data);
+    ctx.status = 200;
+    return await next();
     const isValid = validation.validateRequest(data);
     if (!isValid) {
         ctx.status = 400;

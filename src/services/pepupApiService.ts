@@ -1,6 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import env from 'config';
-import ConfigService, { IPepupConfig, IDateObject, IPepupMeasurementReq } from './configService';
+import ConfigService, { IRegistRequestConfig, IDateObject, IPepupMeasurementReq } from './configService';
 const utils = require('../utils/utilities');
 
 export default class PepupApiService {
@@ -16,7 +15,7 @@ export default class PepupApiService {
 
 
     private initialize() {
-        this.apiUrl = env.get('pepup.url.api');
+        this.apiUrl = this.configService.getEnv().pepup.url.api;
     }
 
     public setSessionId(sessionId: string) {
@@ -34,7 +33,7 @@ export default class PepupApiService {
 
     async registAll(fromDateObj: IDateObject, toDateObj: IDateObject) {
         let errCnt = 0;
-        const errLimit = this.configService.getEnv('pepup.errorLimit');
+        const errLimit = this.configService.getEnv().pepup.configs.errorLimit;
 
         let registDateObj = fromDateObj;
 
@@ -54,7 +53,7 @@ export default class PepupApiService {
     }
 
     async registStep(date: Date) {
-        const data = this.createStepData(utils.getFormattedDate(date, this.configService.getEnv('pepup.format')));
+        const data = this.createStepData(utils.getFormattedDate(date, this.configService.getEnv().pepup.configs.dateFormat));
         const res = await axios.post(this.apiUrl, data, this.getHeaders());
         if (res.status < 200 && res.status > 399) {
             // ERROR
@@ -65,7 +64,7 @@ export default class PepupApiService {
     }
 
     async registSleeping(date: Date) {
-        const data = this.createSleepData(utils.getFormattedDate(date, this.configService.getEnv('pepup.format')));
+        const data = this.createSleepData(utils.getFormattedDate(date, this.configService.getEnv().pepup.configs.dateFormat));
         const res = await axios.post(this.apiUrl, data, this.getHeaders());
         if (res.status < 200 && res.status > 399) {
             // ERROR
@@ -90,7 +89,7 @@ export default class PepupApiService {
     }
 
     private createSleepData(date: string) {
-        const value = Number(this.configService.getEnv('pepup.sleepTime'));
+        const value = Number(this.configService.getEnv().pepup.configs.sleepTime);
         return this.templatePostData('sleeping', value, date);
     }
 

@@ -1,30 +1,30 @@
-import env from 'config';
+import {config as c, IConfig} from 'node-config-ts';
 
 export interface IEnvironmentConfig {
-    "env": string,
-    "service": {
-        "uri": string,
-        "port": string 
+    env: string,
+    service: {
+        uri: string,
+        port: string
     },
-    "google": {
-        "scope": [string],
-        "token_path": string,
-        "credencials_path": string,
-        "work_dir": string
+    google: {
+        scope: [string],
+        token_path: string,
+        credencials_path: string,
+        work_dir: string
     },
-    "pepup": {
-        "url": {
-            "base": string,
-            "login": string,
-            "api": string,
-            "page": string
+    pepup: {
+        url: {
+            base: string,
+            login: string,
+            api: string,
+            page: string
         },
-        "sleepTime": number,
-        "format": string
+        sleepTime: number,
+        dateFormat: string
     }
 }
 
-export interface IPepupConfig {
+export interface IRegistRequestConfig {
     loginId: string,
     password: string,
     date: {
@@ -32,8 +32,8 @@ export interface IPepupConfig {
         to: string
     },
     stepsRange: {
-        from: number,
-        to: number
+        from: string,
+        to: string
     }
 };
 
@@ -65,51 +65,47 @@ export interface IPepupMeasurementReq {
 }
 
 export default class ConfigService {
+    private env: IConfig;
+    private loginId: string;
+    private password: string;
     private fromDate: IDateObject;
     private toDate: IDateObject;
     private stepRange: IStepRange;
 
-    constructor(config: IPepupConfig) {
+    constructor(config: IRegistRequestConfig) {
         this.initialize(config);
     }
 
-    initialize(config: IPepupConfig) {
+    initialize(config: IRegistRequestConfig) {
+        this.setLoginId(config.loginId);
+        this.setPassword(config.password);
         this.setFromDate(new Date(config.date.from));
         this.setToDate(new Date(config.date.to));
         this.setStepRange(config.stepsRange.from, config.stepsRange.to);
+        this.setEnv(c);
     };
 
-    setFromDate(date: Date) {
-        this.fromDate = this.createDateObj(date);
-    };
+    //setter
+    setLoginId(loginId: string) { this.loginId = loginId; };
+    setPassword(password: string) { this.password = password; };
+    setFromDate(date: Date) { this.fromDate = this.createDateObj(date); };
+    setToDate(date: Date) { this.toDate = this.createDateObj(date); };
+    setStepRange(from: string, to: string) { this.stepRange = { from: Number(from), to: Number(to) }; };
+    setEnv(c: IConfig) { this.env = c; };
 
-    setToDate(date: Date) {
-        this.toDate = this.createDateObj(date);
-    };
+    //getter
+    getLoginId(): string { return this.loginId; };
+    getPassword(): string { return this.password; };
+    getFromDate(): IDateObject { return this.fromDate; };
+    getToDate(): IDateObject { return this.toDate; };
+    getStepRange(): IStepRange { return this.stepRange; };
+    getEnv() { return this.env; }
 
-    setStepRange(from: number, to: number) {
-        this.stepRange = {
-            from: from,
-            to: to
-        };
-    };
-
-    getFromDate(): IDateObject {
-        return this.fromDate;
-    };
-
-    getToDate(): IDateObject {
-        return this.toDate;
-    };
-
-    getStepRange(): IStepRange {
-        return this.stepRange;
-    };
-
-    getEnv(key: string) {
-        return env.get(key);
-    }
-
+    /**
+     * Create custom date object
+     * @param date date object
+     * @return IDateObject
+     */
     createDateObj(date: Date) : IDateObject {
         return {
             date: date,

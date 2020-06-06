@@ -1,32 +1,38 @@
 import * as fs from 'fs';
 import readline from 'readline';
 import {google, drive_v3} from 'googleapis';
-import env from 'config';
-
-// If modifying these scopes, delete token.json.
-const SCOPES = env.get('google.scope');
-// The file token.json stores the user's access and refresh tokens, and is
-// created automatically when the authorization flow completes for the first
-// time.
-const TOKEN_PATH: string = env.get('google.token_path');
-const CREDENTIALS_PATH: string = env.get('google.credentials_path');
+import ConfigService from './configService';
 
 export default class GoogleDriveService {
-    constructor (){
+    private driveClient: drive_v3.Drive;
+    private configService: ConfigService;
+    private SCOPES: string[];
+    private TOKEN_PATH: string;
+    private CREDENTIALS_PATH: string;
+
+    constructor (configService: ConfigService){
+        this.configService = configService;
+
         // Load client secrets from a local file.
-        fs.readFile(CREDENTIALS_PATH, (err: any, content: any) => {
+        fs.readFile(this.CREDENTIALS_PATH, (err: any, content: any) => {
             if (err) return console.log('Error loading client secret file:', err);
             // Authorize a client with credentials, then call the Google Drive API.
             this.authorize(JSON.parse(content), this.initialize);
         });
     }
-    private driveClient: drive_v3.Drive;
 
     /**
      * 
      */
     initialize(auth: string) {
         this.driveClient = google.drive({version: 'v3', auth});
+        // If modifying these scopes, delete token.json.
+        this.SCOPES = this.configService.getEnv().google.scope;
+        // The file token.json stores the user's access and refresh tokens, and is
+        // created automatically when the authorization flow completes for the first
+        // time.
+        this.TOKEN_PATH = this.configService.getEnv().google.token_path;
+        this.CREDENTIALS_PATH = this.configService.getEnv().google.credentials_path;
     }
 
     /**
@@ -41,7 +47,7 @@ export default class GoogleDriveService {
             client_id, client_secret, redirect_uris[0]);
     
         // Check if we have previously stored a token.
-        fs.readFile(TOKEN_PATH, (err: any, token: any) => {
+        fs.readFile(this.TOKEN_PATH, (err: any, token: any) => {
             if (err) return this.getAccessToken(oAuth2Client, callback);
             oAuth2Client.setCredentials(JSON.parse(token));
             callback(oAuth2Client);
@@ -57,7 +63,7 @@ export default class GoogleDriveService {
     getAccessToken(oAuth2Client: any, callback: any) {
         const authUrl = oAuth2Client.generateAuthUrl({
             access_type: 'offline',
-            scope: SCOPES,
+            scope: this.SCOPES,
         });
         console.log('Authorize this app by visiting this url:', authUrl);
         const rl = readline.createInterface({
@@ -70,9 +76,9 @@ export default class GoogleDriveService {
                 if (err) return console.error('Error retrieving access token', err);
                 oAuth2Client.setCredentials(token);
                 // Store the token to disk for later program executions
-                fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err: any) => {
+                fs.writeFile(this.TOKEN_PATH, JSON.stringify(token), (err: any) => {
                     if (err) return console.error(err);
-                    console.log('Token stored to', TOKEN_PATH);
+                    console.log('Token stored to', this.TOKEN_PATH);
                 });
                 callback(oAuth2Client);
             });
@@ -105,7 +111,7 @@ export default class GoogleDriveService {
      * 
      */
     fileCreate() {
-        const folderId : string = env.get('google.work_dir');
+        const folderId = this.configService.getEnv().google.work_dir;
         // const fileMetadata = {
         //     name: 'photo.jpg',
         //     parents: [folderId]

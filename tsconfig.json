@@ -13,12 +13,11 @@
             "*": [
                 "node_modules/*",
                 "src/types/*"
-            ]
+            ],
+            "node-config-ts": [ "config/Config.d.ts" ]
         },
         "lib": [ "es5", "es6" ],
-        "types": [
-            "kao"
-        ]
+        "types": [ "koa", "jest" ]
     },
     "include": [
         "src/**/*"

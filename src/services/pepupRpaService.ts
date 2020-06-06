@@ -1,8 +1,5 @@
 import puppeteer from 'puppeteer';
-import ConfigService, { IPepupConfig, IDateObject } from './configService';
-import { eventNames } from 'cluster';
-
-const utils = require('../utils/utilities');
+import ConfigService, { IRegistRequestConfig, IDateObject } from './configService';
 
 export default class PepupRpaService {
     private url: string;
@@ -16,7 +13,7 @@ export default class PepupRpaService {
     }
 
     async initialize() {
-        this.url = this.configService.getEnv('pepup.url.page') as string;
+        this.url = this.configService.getEnv().pepup.url.page;
         this.browser = await puppeteer.launch();
         this.page = await this.browser.newPage();
     }
@@ -46,7 +43,7 @@ export default class PepupRpaService {
 
     async registAll(fromDateObj: IDateObject, toDateObj: IDateObject) {
         let errCnt = 0;
-        const errLimit = this.configService.getEnv('pepup.errorLimit');
+        const errLimit = this.configService.getEnv().pepup.configs.errorLimit;
         
         // initialize a regist date and last date object
         let registDateObj = fromDateObj;
@@ -58,7 +55,7 @@ export default class PepupRpaService {
             try {
                 await this.clickCalendars(registDateObj, dateObj);
             } catch (e) {
-                console.log(`WARN::[Failed] regist at ${registDateObj.str.date}::[Error count]${errCnt}::[Message]${e}`);
+                console.error(`ERROR::[Failed] regist at ${registDateObj.str.date}::[Error count]${errCnt}::[Message]${e}`);
                 errCnt++;
             }
 

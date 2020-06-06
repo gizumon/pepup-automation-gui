@@ -1,9 +1,9 @@
-import { IPepupConfig } from './configService';
+import { IRegistRequestConfig } from './configService';
 
 export default class ValidationService {
     constructor() {}
 
-    validateRequest(data: IPepupConfig): Boolean {
+    validateRequest(data: IRegistRequestConfig): Boolean {
         if (!data ||
             !data.loginId ||
             !data.password ||

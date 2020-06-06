@@ -1,3 +1,6 @@
+/**
+ * Initialize form inputs
+ */
 window.onload = function () {
     const today = new Date();
     const firstDay = new Date();
@@ -6,6 +9,9 @@ window.onload = function () {
     $('#dateTo').val(dateToHtml(today));
 }
 
+/**
+ * Post api request
+ */
 function regist() {
     const obj = {
         'loginId': $('#loginId').val(),
@@ -37,6 +43,10 @@ function regist() {
     }
 }
 
+/**
+ * Validate request object
+ * @param {*} obj 
+ */
 function validate(obj) {
     const today = new Date();
     const minSteps = 0;
@@ -46,27 +56,44 @@ function validate(obj) {
     const dateTo = new Date(obj.date.to);
     let errorArr = [];
     // All inputs
-    if (!(obj.loginId && obj.password && obj.date.from && obj.date.to && obj.stepsRange.from && obj.stepsRange.to)) {
+    if (!obj.loginId ||
+        !obj.password ||
+        !obj.date ||
+        !obj.date.from ||
+        !obj.date.to ||
+        !obj.stepsRange ||
+        !obj.stepsRange.from ||
+        !obj.stepsRange.to
+    ) {
         errorArr.push("未入力欄がないか確認してください");
     }
     // Validate for Date
-    if (dateFrom.getTime() >= today.getTime() || dateTo.getTime() >= today.getTime()) {
-        errorArr.push(`日付に現在時刻より先の日付が指定されています`);
+    if (dateFrom.getTime() >= today.getTime() ||
+        dateTo.getTime() >= today.getTime()
+    ) {
+        errorArr.push(`現在より先の日付は登録できません`);
     }
     if (dateFrom.getTime() >= dateTo.getTime()) {
-        errorArr.push(`日付の左側の入力欄が右側より小さい値になっているか確認してください`);
+        errorArr.push(`日付の範囲が正しいか確認してください`);
     }
     // validate for Steps
-    if (obj.stepsRange.from < minSteps || obj.stepsRange.from > maxSteps ||
-        obj.stepsRange.to < minSteps || obj.stepsRange.to > maxSteps) {
+    if (obj.stepsRange.from < minSteps ||
+        obj.stepsRange.from > maxSteps ||
+        obj.stepsRange.to < minSteps ||
+        obj.stepsRange.to > maxSteps
+    ) {
         errorArr.push(`歩数の入力欄の値が正しいか確認してください ( ${minSteps}~${maxSteps} )`);
     }
     if (obj.stepsRange.from >= obj.stepsRange.to) {
-        errorArr.push(`歩数の左側の入力欄が右側より小さい値になっているか確認してください`);
+        errorArr.push(`歩数の範囲が確認してください`);
     }
     return errorArr;
 }
 
+/**
+ * Conver date object to date string 
+ * @param {Date} dateObj 
+ */
 function dateToHtml(dateObj) {
     const thisYear = dateObj.getFullYear(); 
     const thisMonth = ('00' + (dateObj.getMonth() + 1)).slice(-2);
@@ -75,6 +102,10 @@ function dateToHtml(dateObj) {
     return thisYear + '-' + thisMonth + '-' + thisDay;
 }
 
+/**
+ * Create message element
+ * @param {string} msg 
+ */
 function createMsgEl(msg) {
     const el = document.createElement('li');
     el.innerHTML = msg;
