@@ -15,38 +15,49 @@ const config1 = {
 
 describe('Config service as data:config1', () => {
     const test1 = new ConfigService(config1);
-    it('Loging ID should be test_id.', () => {
+    it('CASE1: Loging ID should be test_id.', () => {
         expect(test1.getLoginId()).toBe('test_id');
     });
-    it('Password should be test_id.', () => {
+    it('CASE2: Password should be test_id.', () => {
         expect(test1.getPassword()).toBe('test_password');
     });
-    it('From date should be custom date object.', () => {
-        expect(test1.getFromDate()).toBe({
+    it('CASE3: From date should be custom date object.', () => {
+        expect(test1.getFromDate()).toEqual({
             date: new Date('2020-01-01'),
             str: {
-                date: '2020-01-01',
-                year: 2020,
-                month: 0,
-                day: 0
-            }
-        });
-    });
-    it('From date should be custom date object.', () => {
-        expect(test1.getToDate()).toBe({
-            date: new Date('2020-01-02'),
-            str: {
-                date: '2020-01-02',
+                date: '2020-01-01T00:00:00.000Z',
                 year: 2020,
                 month: 0,
                 day: 1
             }
         });
     });
-    it('Steps range should be {from: 8000, to: 12000}.', () => {
-        expect(test1.getStepRange()).toBe({from: 8000, to: 12000});
+    it('CASE4: From date should be custom date object.', () => {
+        expect(test1.getToDate()).toEqual({
+            date: new Date('2020-01-02'),
+            str: {
+                date: '2020-01-02T00:00:00.000Z',
+                year: 2020,
+                month: 0,
+                day: 2
+            }
+        });
     });
-    it('Env.name should be pepup automation GUI.', () => {
+    it('CASE5: Steps range should be {from: 8000, to: 12000}.', () => {
+        expect(test1.getStepRange()).toEqual({from: 8000, to: 12000});
+    });
+    it('CASE6: Env.name should be pepup automation GUI.', () => {
         expect(test1.getEnv().name).toBe('pepup automation GUI');
+    });
+    it('CASE7: Date object should be custom date object.', () => {
+        expect(test1.createDateObj(new Date('2020-01-01'))).toEqual({
+            date: new Date('2020-01-01'),
+            str: {
+                date: '2020-01-01T00:00:00.000Z',
+                year: 2020,
+                month: 0,
+                day: 1
+            }
+        });
     });
 });

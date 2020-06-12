@@ -22,7 +22,7 @@
         },
         "configs": {
             "sleepTime": 7,
-            "dateFormat": "yyyy-mm-dd",
+            "dateFormat": "yyyy-mm-ddT00:00:00.000Z",
             "errorLimit": 5,
             "daysLimit": 60    
         }

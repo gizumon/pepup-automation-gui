@@ -25,9 +25,7 @@ export default class ValidationService {
             return false;
         }
 
-        if (stepFrom === NaN ||
-            stepTo === NaN
-        ) {
+        if (isNaN(stepFrom) || isNaN(stepTo)) {
             console.warn(`WARNING::[Message]Invalid steps parameter`);
             return false;            
         }

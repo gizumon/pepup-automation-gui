@@ -53,7 +53,7 @@
   "scripts": {
     "start": "nodemon",
     "build": "tsc",
-    "test": "jest",
+    "test": "jest --watch",
     "postinstall": "node-config-ts"
   },
   "repository": {

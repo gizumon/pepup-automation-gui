@@ -1,28 +1,7 @@
 import {config as c, IConfig} from 'node-config-ts';
+import utils from '../utils/utilityFunctions';
 
-export interface IEnvironmentConfig {
-    env: string,
-    service: {
-        uri: string,
-        port: string
-    },
-    google: {
-        scope: [string],
-        token_path: string,
-        credencials_path: string,
-        work_dir: string
-    },
-    pepup: {
-        url: {
-            base: string,
-            login: string,
-            api: string,
-            page: string
-        },
-        sleepTime: number,
-        dateFormat: string
-    }
-}
+export type IEnvironmentConfig = IConfig;
 
 export interface IRegistRequestConfig {
     loginId: string,
@@ -52,16 +31,28 @@ export interface IStepRange {
     to  : number
 };
 
-export interface IPepupMeasurementReq {
-    'values': [
+export interface IPepupMeasurementReq_V1 {
+    values: [
         {
-            'source'    : 'web',
-            'source_uid': 'web',
-            'timestamp' : string,
-            'value'     : string,
-            'value_type': string
+            source    : 'web',
+            source_uid: 'web',
+            timestamp : string,
+            value     : string,
+            value_type: string
         }
     ]
+}
+
+export interface IPepupMeasurementReq_V2 {
+    source    : 'web',
+    source_uid: 'web',
+    step_count?: [IMeasurementData_V2],
+    sleeping?: [IMeasurementData_V2]
+}
+
+export interface IMeasurementData_V2 {
+    value: string | number,
+    timestamp: string
 }
 
 export default class ConfigService {
@@ -77,21 +68,21 @@ export default class ConfigService {
     }
 
     initialize(config: IRegistRequestConfig) {
+        this.setEnv(c);
         this.setLoginId(config.loginId);
         this.setPassword(config.password);
         this.setFromDate(new Date(config.date.from));
         this.setToDate(new Date(config.date.to));
         this.setStepRange(config.stepsRange.from, config.stepsRange.to);
-        this.setEnv(c);
     };
 
     //setter
+    setEnv(c: IConfig) { this.env = c; };
     setLoginId(loginId: string) { this.loginId = loginId; };
     setPassword(password: string) { this.password = password; };
     setFromDate(date: Date) { this.fromDate = this.createDateObj(date); };
     setToDate(date: Date) { this.toDate = this.createDateObj(date); };
     setStepRange(from: string, to: string) { this.stepRange = { from: Number(from), to: Number(to) }; };
-    setEnv(c: IConfig) { this.env = c; };
 
     //getter
     getLoginId(): string { return this.loginId; };
@@ -110,10 +101,10 @@ export default class ConfigService {
         return {
             date: date,
             str: {
-                date : date.toDateString(),
+                date : utils.getFormattedDate(date, this.getEnv().pepup.configs.dateFormat),
                 year : date.getFullYear(),
                 month: date.getMonth(),
-                day  : date.getDay()  
+                day  : date.getDate()
             }
         }
     }

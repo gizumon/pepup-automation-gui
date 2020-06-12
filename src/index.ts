@@ -44,10 +44,9 @@ router.get('/', async (ctx: Koa.Context, next: () => Promise<any>) => {
 });
 
 router.post( '/regist', async (ctx: Koa.Context, next: () => Promise<any>) => {
+    console.log('ctx',ctx);
     const data = ctx.request.body;
     console.log(data);
-    ctx.status = 200;
-    return await next();
     const isValid = validation.validateRequest(data);
     if (!isValid) {
         ctx.status = 400;

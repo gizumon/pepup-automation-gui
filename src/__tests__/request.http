@@ -1,10 +1,11 @@
-@rootUrl=http://localhost:3000/
+@rootUrl=http://localhost:3000
 
 ### GET
 GET {{rootUrl}}
 
 ### POST
-POST {{rootUrl}}regist
+POST {{rootUrl}}/regist
+content-type: application/json; charset=UTF-8
 
 {
     "loginId": "dummy",
@@ -17,4 +18,4 @@ POST {{rootUrl}}regist
         "from": "8000",
         "to": "12000"
     }
-};
+}

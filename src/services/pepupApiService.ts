@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import ConfigService, { IRegistRequestConfig, IDateObject, IPepupMeasurementReq } from './configService';
-const utils = require('../utils/utilities');
+import ConfigService, { IRegistRequestConfig, IDateObject, IPepupMeasurementReq_V1, IPepupMeasurementReq_V2, IMeasurementData_V2 } from './configService';
+import utils from '../utils/utilityFunctions';
 
 export default class PepupApiService {
     private configService: ConfigService;
@@ -38,49 +38,48 @@ export default class PepupApiService {
         let registDateObj = fromDateObj;
 
         // roop if regist date is smaller than from date
-        while (registDateObj.date <= toDateObj.date && errCnt < errLimit) {
+        while (registDateObj.date <= toDateObj.date) {
             await Promise.all([
-                await this.registStep(registDateObj.date).catch(() => { errCnt++; }),
-                await this.registSleeping(registDateObj.date).catch(() => { errCnt++; })
+                await this.registStep(registDateObj.date).catch(() => errCnt++),
+                await this.registSleeping(registDateObj.date).catch(() => errCnt++)
             ]);
+
+            if (errCnt >= errLimit) {
+                throw new Error(`[Message]Errors are over the number of limit::[date]Break at ${registDateObj.date}`);
+                break;
+            }
             // Update regist date as the next day
             registDateObj = this.configService.createDateObj(new Date(registDateObj.str.year, registDateObj.str.month, registDateObj.str.day + 1));
-        }
-
-        if (errCnt > errLimit) {
-            return Promise.reject();
         }
     }
 
     async registStep(date: Date) {
-        const data = this.createStepData(utils.getFormattedDate(date, this.configService.getEnv().pepup.configs.dateFormat));
-        const res = await axios.post(this.apiUrl, data, this.getHeaders());
-        if (res.status < 200 && res.status > 399) {
-            // ERROR
-            console.warn(`WARNING::[URL]${this.apiUrl}::[Staus]${res.status} ${res.statusText}::[data]${res.data}`);
-            return Promise.reject();
+        const data = this.createStepData_V2(utils.getFormattedDate(date, this.configService.getEnv().pepup.configs.dateFormat));
+        try {
+            const res = await axios.post(this.apiUrl, data, this.getHeaders());
+            console.log(`INFO::[URL]${this.apiUrl}::[Type]steps::[Date]${date}::[Data]${res.data}`);
+        } catch (error) {
+            throw new Error(`WARNING::[URL]${this.apiUrl}::[Type]steps::[Date]${date}::[Error]${error}`);
         }
-        console.log(`INFO::${this.apiUrl}::${res.data}`);
     }
 
     async registSleeping(date: Date) {
-        const data = this.createSleepData(utils.getFormattedDate(date, this.configService.getEnv().pepup.configs.dateFormat));
-        const res = await axios.post(this.apiUrl, data, this.getHeaders());
-        if (res.status < 200 && res.status > 399) {
-            // ERROR
-            console.warn(`WARNING::${this.apiUrl}::${res.status} ${res.statusText}::${res.data}`);
-            return Promise.reject();
+        const data = this.createSleepData_V2(utils.getFormattedDate(date, this.configService.getEnv().pepup.configs.dateFormat));
+        try {
+            const res = await axios.post(this.apiUrl, data, this.getHeaders());
+            console.log(`INFO::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Data]${res.data}`);
+        } catch (error) {
+            throw new Error(`WARNING::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Error]${error}`);
         }
-        console.log(`INFO::${this.apiUrl}::${res.data}`);
     }
 
-    private templatePostData(type: string, value: number, timestamp: string): IPepupMeasurementReq {
+    private templatePostData_V1(type: string, value: number, timestamp: string): IPepupMeasurementReq_V1 {
         return {
             'values': [
                 {
                     'source'    : 'web',
                     'source_uid': 'web',
-                    'timestamp' : String(timestamp),
+                    'timestamp' : timestamp,
                     'value'     : String(value),
                     'value_type': String(type)
                 }
@@ -88,15 +87,38 @@ export default class PepupApiService {
         }
     }
 
-    private createSleepData(date: string) {
-        const value = Number(this.configService.getEnv().pepup.configs.sleepTime);
-        return this.templatePostData('sleeping', value, date);
-    }
+    private createSleepData_V1(timestamp: string): IPepupMeasurementReq_V1 {
+        const value = Number(this.configService.getEnv().pepup.configs.sleepTime) * 60;
+        return this.templatePostData_V1('sleeping', value, timestamp);
+    };
 
-    private createStepData(date: string) {
+    private createStepData_V1(timestamp: string): IPepupMeasurementReq_V1 {
         const min = Number(this.configService.getStepRange().from);
         const max = Number(this.configService.getStepRange().to);
         const value = utils.getRandomInt(min, max);
-        return this.templatePostData('step_count', value, date);
-    }
+        return this.templatePostData_V1('step_count', value, timestamp);
+    };
+
+    private templatePostData_V2(type: string, value: number, timestamp: string): IPepupMeasurementReq_V2 {
+        return {
+            'source': 'web',
+            'source_uid': 'web',
+            [type]: [{
+                'value': String(value),
+                'timestamp': timestamp
+            }]
+        };
+    };
+
+    private createSleepData_V2(timestamp: string): IPepupMeasurementReq_V2 {
+        const value = Number(this.configService.getEnv().pepup.configs.sleepTime) * 60;
+        return this.templatePostData_V2('sleeping', value, timestamp);
+    };
+
+    private createStepData_V2(timestamp: string): IPepupMeasurementReq_V2 {
+        const min = Number(this.configService.getStepRange().from);
+        const max = Number(this.configService.getStepRange().to);
+        const value = utils.getRandomInt(min, max);
+        return this.templatePostData_V2('step_count', value, timestamp);
+    };
 }
