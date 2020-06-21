@@ -1,5 +1,6 @@
 import {config as c, IConfig} from 'node-config-ts';
 import utils from '../utils/utilityFunctions';
+import moment from 'moment';
 
 export type IEnvironmentConfig = IConfig;
 
@@ -13,16 +14,6 @@ export interface IRegistRequestConfig {
     stepsRange: {
         from: string,
         to: string
-    }
-};
-
-export interface IDateObject {
-    date : Date,
-    str: {
-        date     : string,
-        year     : number,
-        month    : number,
-        day      : number
     }
 };
 
@@ -59,8 +50,8 @@ export default class ConfigService {
     private env: IConfig;
     private loginId: string;
     private password: string;
-    private fromDate: IDateObject;
-    private toDate: IDateObject;
+    private fromDate: moment.Moment;
+    private toDate: moment.Moment;
     private stepRange: IStepRange;
 
     constructor(config: IRegistRequestConfig) {
@@ -71,8 +62,8 @@ export default class ConfigService {
         this.setEnv(c);
         this.setLoginId(config.loginId);
         this.setPassword(config.password);
-        this.setFromDate(new Date(config.date.from));
-        this.setToDate(new Date(config.date.to));
+        this.setFromDate(config.date.from);
+        this.setToDate(config.date.to);
         this.setStepRange(config.stepsRange.from, config.stepsRange.to);
     };
 
@@ -80,15 +71,15 @@ export default class ConfigService {
     setEnv(c: IConfig) { this.env = c; };
     setLoginId(loginId: string) { this.loginId = loginId; };
     setPassword(password: string) { this.password = password; };
-    setFromDate(date: Date) { this.fromDate = this.createDateObj(date); };
-    setToDate(date: Date) { this.toDate = this.createDateObj(date); };
+    setFromDate(date: string) { this.fromDate = this.createDateObj(date); };
+    setToDate(date: string) { this.toDate = this.createDateObj(date); };
     setStepRange(from: string, to: string) { this.stepRange = { from: Number(from), to: Number(to) }; };
 
     //getter
     getLoginId(): string { return this.loginId; };
     getPassword(): string { return this.password; };
-    getFromDate(): IDateObject { return this.fromDate; };
-    getToDate(): IDateObject { return this.toDate; };
+    getFromDate(): moment.Moment { return this.fromDate; };
+    getToDate(): moment.Moment { return this.toDate; };
     getStepRange(): IStepRange { return this.stepRange; };
     getEnv() { return this.env; }
 
@@ -97,15 +88,7 @@ export default class ConfigService {
      * @param date date object
      * @return IDateObject
      */
-    createDateObj(date: Date) : IDateObject {
-        return {
-            date: date,
-            str: {
-                date : utils.getFormattedDate(date, this.getEnv().pepup.configs.dateFormat),
-                year : date.getFullYear(),
-                month: date.getMonth(),
-                day  : date.getDate()
-            }
-        }
+    createDateObj(date: string) : moment.Moment {
+        return moment.utc(date, this.getEnv().settings.htmlDateFromat);
     }
 }

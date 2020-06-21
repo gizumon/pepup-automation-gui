@@ -17,14 +17,18 @@
         "url": {
             "base": "https://pepup.life/",
             "login": "https://pepup.life/users/sign_in",
-            "api": "https://pepup.life/api/v1/@me/measurements",
+            "api": "https://pepup.life/api/v2/@me/measurements",
             "page": "https://pepup.life/scsk_mileage_campaigns"
         },
         "configs": {
             "sleepTime": 7,
-            "dateFormat": "yyyy-mm-ddT00:00:00.000Z",
-            "errorLimit": 5,
-            "daysLimit": 60    
+            "dateFormat": "YYYY-MM-DDT00:00:00.000Z",
+            "errorLimit": 3,
+            "daysLimit": 60,
+            "isHeadless": false
         }
+    },
+    "settings": {
+        "htmlDateFormat": "YYYY-MM-DD"
     }
 }

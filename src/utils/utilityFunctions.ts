@@ -31,15 +31,15 @@ export default class UtilityFunctions {
      * Get date as specified format
      * @return string
      */
-    static getFormattedDate = function(date: Date, format: string = 'yyyy-mm-ddT00:00:00.000Z'): string {
-        const yCount = this.countStr('y', format);
-        const mCount = this.countStr('m', format);
-        const dCount = this.countStr('d', format);
-        const year = this.zeroPadding(date.getFullYear(), yCount);
-        const month = this.zeroPadding(date.getMonth() + 1, mCount);
-        const day = this.zeroPadding(date.getDate(), dCount);
-        return format.replace('y'.repeat(yCount), year).replace('m'.repeat(mCount), month).replace('d'.repeat(dCount), day);
-    }
+    // static getFormattedDate = function(date: Date, format: string = 'yyyy-mm-ddT00:00:00.000Z'): string {
+    //     const yCount = this.countStr('y', format);
+    //     const mCount = this.countStr('m', format);
+    //     const dCount = this.countStr('d', format);
+    //     const year = this.zeroPadding(date.getFullYear(), yCount);
+    //     const month = this.zeroPadding(date.getMonth() + 1, mCount);
+    //     const day = this.zeroPadding(date.getDate(), dCount);
+    //     return format.replace('y'.repeat(yCount), year).replace('m'.repeat(mCount), month).replace('d'.repeat(dCount), day);
+    // }
 
     /**
      * Padding zero as specified length
@@ -47,13 +47,13 @@ export default class UtilityFunctions {
      * @param length
      * @return string
      */
-    static zeroPadding = function(num:number, length: number): string {
-        return ('000000000000000' + num).slice(-length);
-    };
+    // static zeroPadding = function(num:number, length: number): string {
+    //     return ('000000000000000' + num).slice(-length);
+    // };
 
-    static countStr(searchStr: string, targetStr: string): number {
-        const regexp = new RegExp(searchStr, 'ig');
-        const matches = targetStr.match(regexp) || [];
-        return matches.length;
-    }
+    // static countStr(searchStr: string, targetStr: string): number {
+    //     const regexp = new RegExp(searchStr, 'ig');
+    //     const matches = targetStr.match(regexp) || [];
+    //     return matches.length;
+    // }
 }

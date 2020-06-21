@@ -21,6 +21,7 @@
     "koa-json": "^2.0.2",
     "koa-logger": "^3.2.1",
     "koa-router": "^8.0.8",
+    "moment": "^2.27.0",
     "node-config-ts": "^3.0.4",
     "puppeteer": "^3.3.0",
     "puppeteer-core": "^3.3.0",

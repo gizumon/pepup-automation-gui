@@ -44,9 +44,8 @@ router.get('/', async (ctx: Koa.Context, next: () => Promise<any>) => {
 });
 
 router.post( '/regist', async (ctx: Koa.Context, next: () => Promise<any>) => {
-    console.log('ctx',ctx);
     const data = ctx.request.body;
-    console.log(data);
+    console.log('reques', data);
     const isValid = validation.validateRequest(data);
     if (!isValid) {
         ctx.status = 400;
@@ -56,6 +55,7 @@ router.post( '/regist', async (ctx: Koa.Context, next: () => Promise<any>) => {
 
     const senario = new Senario(data);
     const isSuccess = await senario.registAll();
+    console.log('regist result', isSuccess);
     if (!isSuccess) {
         ctx.status = 500;
         ctx.body = 'Failed regist...'

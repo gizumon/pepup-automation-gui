@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import ConfigService, { IRegistRequestConfig, IDateObject, IPepupMeasurementReq_V1, IPepupMeasurementReq_V2, IMeasurementData_V2 } from './configService';
+import ConfigService, { IRegistRequestConfig, IPepupMeasurementReq_V1, IPepupMeasurementReq_V2, IMeasurementData_V2 } from './configService';
 import utils from '../utils/utilityFunctions';
+import moment from 'moment';
 
 export default class PepupApiService {
     private configService: ConfigService;
@@ -31,46 +32,53 @@ export default class PepupApiService {
         };
     }
 
-    async registAll(fromDateObj: IDateObject, toDateObj: IDateObject) {
+    async registAll(fromDate: moment.Moment, toDate: moment.Moment) {
         let errCnt = 0;
         const errLimit = this.configService.getEnv().pepup.configs.errorLimit;
 
-        let registDateObj = fromDateObj;
+        let targetDate = moment(fromDate);
 
+        console.log('api', targetDate, toDate);
         // roop if regist date is smaller than from date
-        while (registDateObj.date <= toDateObj.date) {
+        while (targetDate.isSameOrBefore(toDate)) {
+            console.log('regist from API', targetDate.toLocaleString());
             await Promise.all([
-                await this.registStep(registDateObj.date).catch(() => errCnt++),
-                await this.registSleeping(registDateObj.date).catch(() => errCnt++)
+                await this.registStep(targetDate).catch(() => errCnt++),
+                await this.registSleeping(targetDate).catch(() => errCnt++)
             ]);
 
             if (errCnt >= errLimit) {
-                throw new Error(`[Message]Errors are over the number of limit::[date]Break at ${registDateObj.date}`);
+                throw new Error(`[Message]Errors are over the number of limit::[date]Break at ${targetDate.toLocaleString()}`);
                 break;
             }
             // Update regist date as the next day
-            registDateObj = this.configService.createDateObj(new Date(registDateObj.str.year, registDateObj.str.month, registDateObj.str.day + 1));
+            targetDate.add(1, 'd');
         }
     }
 
-    async registStep(date: Date) {
-        const data = this.createStepData_V2(utils.getFormattedDate(date, this.configService.getEnv().pepup.configs.dateFormat));
-        try {
-            const res = await axios.post(this.apiUrl, data, this.getHeaders());
+    async registStep(date: moment.Moment) {
+        const timestamp = moment.utc(date).toISOString();
+        const data = this.createStepData_V2(timestamp);
+        console.log('regist step', data);
+        const result = await axios.post(this.apiUrl, data, this.getHeaders()).then((res) => {
             console.log(`INFO::[URL]${this.apiUrl}::[Type]steps::[Date]${date}::[Data]${res.data}`);
-        } catch (error) {
+        }).catch((error) => {
+            console.warn(`WARN::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Data]${error}`);
             throw new Error(`WARNING::[URL]${this.apiUrl}::[Type]steps::[Date]${date}::[Error]${error}`);
-        }
+        });
     }
 
-    async registSleeping(date: Date) {
-        const data = this.createSleepData_V2(utils.getFormattedDate(date, this.configService.getEnv().pepup.configs.dateFormat));
-        try {
-            const res = await axios.post(this.apiUrl, data, this.getHeaders());
+    async registSleeping(date: moment.Moment) {
+        const timestamp = moment.utc(date).toISOString();
+        const data = this.createSleepData_V2(timestamp);
+        console.log('regist sleeping', data);
+        console.log(this.getHeaders());
+        await axios.post(this.apiUrl, data, this.getHeaders()).then((res) => {
             console.log(`INFO::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Data]${res.data}`);
-        } catch (error) {
+        }).catch((error) => {
+            console.warn(`WARN::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Data]${error}`);
             throw new Error(`WARNING::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Error]${error}`);
-        }
+        });
     }
 
     private templatePostData_V1(type: string, value: number, timestamp: string): IPepupMeasurementReq_V1 {

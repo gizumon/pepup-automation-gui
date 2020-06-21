@@ -1,4 +1,6 @@
 import { IRegistRequestConfig } from './configService';
+import moment from 'moment';
+import {config as c} from 'node-config-ts';
 
 export default class ValidationService {
     constructor() {}
@@ -13,14 +15,12 @@ export default class ValidationService {
             console.warn(`WARNING::[Message]Need to fill all required parameters`);
             return false;
         }
-        const dateFrom = new Date(data.date.from);
-        const dateTo = new Date(data.date.to);
+        const dateFrom = moment(data.date.from, c.settings.htmlDateFromat);
+        const dateTo = moment(data.date.to, c.settings.htmlDateFromat);
         const stepFrom = Number(data.stepsRange.from);
         const stepTo = Number(data.stepsRange.to);
 
-        if (dateFrom.toLocaleString() === 'Invalid Date' ||
-            dateTo.toLocaleString() === 'Invalid Date'
-        ) {
+        if (!dateFrom.isValid() || !dateTo.isValid()) {
             console.warn(`WARNING::[Message]Invalid date parameter`);
             return false;
         }
@@ -30,7 +30,7 @@ export default class ValidationService {
             return false;            
         }
 
-        if (dateFrom > dateTo) {
+        if (dateFrom.isAfter(dateTo)) {
             console.warn(`WARNING::[Message]Date range is invalid::[Date from]${dateFrom.toLocaleString()}::[Date to]${dateTo.toLocaleString()}`);
             return false;
         }

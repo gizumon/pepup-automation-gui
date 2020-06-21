@@ -21,7 +21,6 @@ export default class Senario {
     async registAll(): Promise<Boolean> {
         let isSuccess = true;
         const daysLimit = this.configService.getEnv().pepup.configs.daysLimit;
-        const dayTime = 86400000;
 
         const loginId = this.configService.getLoginId();
         const password = this.configService.getPassword();
@@ -29,14 +28,16 @@ export default class Senario {
         const to = this.configService.getToDate();
 
         // below 60 days between from date and to date
-        if ((from.date.getTime() - to.date.getTime()) / dayTime > daysLimit) {
+        if ((from.diff(to, 'days') > daysLimit)) {
             console.warn(`WARNING::[Message]date range need to be below ${daysLimit} days failed...::[from]${from}::[to]${to}`);
             return false;
         }
 
+        await this.rpaService.initialize();
         await this.rpaService.login(loginId, password);
         const isLogin = await this.rpaService.isLogin();
-        if (isLogin) {
+        console.log(isLogin);
+        if (!isLogin) {
             console.warn(`WARNING::[Message]Login failed...::[login ID]${loginId}`);
             return false;
         }
@@ -45,6 +46,7 @@ export default class Senario {
             console.error(`ERROR::[Message]Pepup RPA is failed...::[from]${from}::[to]${to}`);
             isSuccess = false;
         });
+        this.apiService.setSessionId(await this.rpaService.getSettionId());
         await this.apiService.registAll(from, to).catch(() => {
             console.error(`ERROR::[Message]Pepup RPA is failed...::[from]${from}::[to]${to}`);
             isSuccess = false;

@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
-import ConfigService, { IRegistRequestConfig, IDateObject } from './configService';
+import moment from 'moment';
+import ConfigService, { IRegistRequestConfig } from './configService';
 
 export default class PepupRpaService {
     private url: string;
@@ -9,12 +10,11 @@ export default class PepupRpaService {
 
     constructor (configService: ConfigService) {
         this.configService = configService;
-        this.initialize();
     }
 
     async initialize() {
         this.url = this.configService.getEnv().pepup.url.page;
-        this.browser = await puppeteer.launch();
+        this.browser = await puppeteer.launch({ headless: this.configService.getEnv().pepup.configs.isHeadless});
         this.page = await this.browser.newPage();
     }
 
@@ -23,12 +23,12 @@ export default class PepupRpaService {
         await this.page.type('#sender-email', user);
         await this.page.type('#user-pass', password);
         await this.page.click('input[name="commit"]');
-        await this.page.waitForNavigation({timeout: 20000, waitUntil: 'domcontentloaded'});
+        await this.page.waitForNavigation({timeout: 10000, waitUntil: 'networkidle2'});
     }
 
     async isLogin() {
         const url = await this.page.url();
-        return url === 'https://pepup.life/home';
+        return url === 'https://pepup.life/home' || 'https://pepup.life/scsk_mileage_campaigns';
         // const title = await this.page.title();
         // return title === 'ホーム - Pep Up(ペップアップ)';
         // const cookies = await this.page.cookies();
@@ -41,61 +41,70 @@ export default class PepupRpaService {
         return cookies.filter((obj) => obj.name === 'pepup_sess')[0].value;
     }
 
-    async registAll(fromDateObj: IDateObject, toDateObj: IDateObject) {
+    async registAll(fromDate: moment.Moment, toDate: moment.Moment) {
         let errCnt = 0;
         const errLimit = this.configService.getEnv().pepup.configs.errorLimit;
         
         // initialize a regist date and last date object
-        let registDateObj = fromDateObj;
-        const endDateObj = this.configService.createDateObj(new Date(registDateObj.str.year, registDateObj.str.month + 1, 0));
+        let targetDate = moment(fromDate);
 
         // roop if regist date is smaller than lastDateObj.date
-        while (registDateObj.date <= endDateObj.date && errCnt < errLimit ) {
-            const dateObj = endDateObj.date > toDateObj.date ? toDateObj: endDateObj;
+        while (targetDate.isSameOrBefore(toDate)) {
+            const endDate = moment(targetDate).endOf('month').isBefore(toDate) ? moment(fromDate).endOf('month'): toDate;
+            console.log(targetDate, endDate);
             try {
-                await this.clickCalendars(registDateObj, dateObj);
+                await this.clickCalendars(targetDate, endDate);
             } catch (e) {
-                console.error(`ERROR::[Failed] regist at ${registDateObj.str.date}::[Error count]${errCnt}::[Message]${e}`);
+                console.error(`ERROR::[Failed] regist at ${targetDate.toLocaleString()}::[Error count]${errCnt}::[Message]${e}`);
                 errCnt++;
             }
 
-            // Update regist date as the first day of the next month
-            registDateObj = this.configService.createDateObj(new Date(registDateObj.str.year, registDateObj.str.month + 1, 1));
-        }
+            if (errCnt >= errLimit) {
+                throw new Error(`[Message]Errors are over the number of limit::[date]Break at ${targetDate.toLocaleString()}`);
+                break;
+            }
 
-        if (errCnt > errLimit) {
-            return Promise.reject();
+            // Update regist date as the first day of the next month
+            targetDate.add(1, 'month').startOf('month');
         }
     }
 
-    private async clickCalendars (fromDateObj: IDateObject, toDateObj: IDateObject) {
-        const url = this.url + '/' + fromDateObj.str.year + '/' + ('00' + fromDateObj.str.month).slice(-2);
+    private async clickCalendars (fromDate: moment.Moment, toDate: moment.Moment) {
+        // NOTE: month is started from 0
+        const url = this.url + '/' + fromDate.year() + '/' + (fromDate.month() + 1);
         // selectors
         const cardSelector = '.afxg5u-0';
         const cartTitleSelector = '.afxg5u-1';
         const registBtnSelector = '.sc-1ccba62-8 button';
 
-        await this.page.goto(url, {waitUntil: "domcontentloaded"});
+        await this.page.goto(url, {waitUntil: 'networkidle2'});
         const $cards = await this.page.$$(cardSelector);
-        $cards.some(async ($card, index) => {
-            if (index <= 2) { return; } // card1 and 2 are registed from api
-            const $btns = await this.page.$$(registBtnSelector);
-            $btns.some(async ($btn) => {
+        for (let i=0; i < $cards.length; i++) {
+            if (i < 2) { continue; } // card1 and 2 are registed from api
+            const $card = $cards[i];
+            console.log('card', (await (await $card.$(cartTitleSelector)).getProperty('textContent')).jsonValue());
+            
+            const $btns = await $card.$$(registBtnSelector);
+            for (let i=0; i < $btns.length; i++) {
+                // $btns.some(async ($btn) => {
+                const $btn = $btns[i];
+                console.log('btn', (await $btn.getProperty('textContent')).jsonValue());
                 const btnDay = Number(await (await $btn.getProperty('textContent')).jsonValue());
-                const btnDate = new Date(fromDateObj.str.year, fromDateObj.str.month, btnDay);
+                const btnDate = moment(fromDate).date(btnDay);
+                console.log('btn day', btnDay, btnDate);
                 // Continue if btn day is not a number OR btn date is smaller than target date
                 if (btnDay === NaN ||
                     btnDay === 0 ||
-                    btnDate.toString() === 'Invalid Date' ||
-                    btnDate < fromDateObj.date
-                ) { return; }
+                    !btnDate.isValid() ||
+                    btnDate.isBefore(fromDate)
+                ) { continue; }
                 // Break if btn date is begger than to date
-                if (btnDate > toDateObj.date) { return true; }
+                if (btnDate.isAfter(toDate)) { break; }
                 await $btn.click();
                 await this.checkModal();
-            });
-        });
-        this.captureResult(url, `${fromDateObj.str.date}_${toDateObj.str.date}`);
+            };
+        };
+        // await this.captureResult(url, `${fromDateObj.str.date}_${toDateObj.str.date}`);
     }
 
     private async checkModal() {
@@ -104,14 +113,17 @@ export default class PepupRpaService {
         const closeSelector = '.ycydyz-0 button';
 
         const $labels = await this.page.$$(labelsSelector);
-        $labels.some(async ($label) => {
+        for (let i=0; i < $labels.length; i++) {
+            const $label = $labels[i];
             const text = await (await $label.getProperty('textContent')).jsonValue();
+            console.log('label', text);
             const $checkBox = await $label.$('input');
             const checked = await (await $checkBox.getProperty('checked')).jsonValue();
+            console.log(checked);
             if (!checked) {
                 $checkBox.click();
             }
-        });
+        };
         await (await this.page.$(closeSelector)).click();
     }
 
