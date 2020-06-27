@@ -1,0 +1,34 @@
+{
+    "name": "pepup automation GUI",
+    "version": "1.0.0",
+    "description": "Pepup automation tool",
+    "environment": "default",
+    "service": {
+        "uri": "https://guarded-savannah-05576.herokuapp.com",
+        "port": "3000"
+    },
+    "google": {
+        "scope": ["https://www.googleapis.com/auth/drive.metadata.readonly"],
+        "token_path": "../../token.json",
+        "credentials_path": "../../client_secret.json",
+        "work_dir": "1JDohRnutBFPr2uvRwZY6IpxNW8pxX-Pm"
+    },
+    "pepup": {
+        "url": {
+            "base": "https://pepup.life/",
+            "login": "https://pepup.life/users/sign_in",
+            "api": "https://pepup.life/api/v2/@me/measurements",
+            "page": "https://pepup.life/scsk_mileage_campaigns"
+        },
+        "configs": {
+            "sleepTime": 7,
+            "dateFormat": "YYYY-MM-DDT00:00:00.000Z",
+            "errorLimit": 3,
+            "daysLimit": 60,
+            "isHeadless": false
+        }
+    },
+    "settings": {
+        "htmlDateFormat": "YYYY-MM-DD"
+    }
+}

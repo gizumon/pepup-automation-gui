@@ -1,0 +1,74 @@
+@api_v1=https://pepup.life/api/v1/@me/measurements
+
+@api_v2=https://pepup.life/api/v2/@me/measurements
+
+@session_id=04b708d4b6afd7fb20b1214379b7bf00
+
+### V1
+### step_count
+POST {{api_v1}}
+content-type: application/json; charset=UTF-8
+cookie: _ga=GA1.2.1830065474.1582961158; _gid=GA1.2.1574728070.1591928993; pepup_sess={{session_id}}; _gat=1
+
+{
+    "values": [
+        {
+            "source"    : "web",
+            "source_uid": "web",
+            "timestamp" : "2020-06-03T00:00:00.000Z",
+            "value"     : "10110",
+            "value_type": "step_count"
+        }
+    ]
+}
+
+### sleeping
+POST {{api_v1}}
+content-type: application/json; charset=UTF-8
+cookie: _ga=GA1.2.1830065474.1582961158; _gid=GA1.2.1574728070.1591928993; pepup_sess={{session_id}}; _gat=1
+
+{
+    "values": [
+        {
+            "source"    : "web",
+            "source_uid": "web",
+            "timestamp" : "2020-06-03T00:00:00.000Z",
+            "value"     : 420,
+            "value_type": "sleeping"
+        }
+    ]
+}
+
+
+### V2
+### step_count
+POST {{api_v2}}
+content-type: application/json; charset=UTF-8
+cookie: _ga=GA1.2.1830065474.1582961158; _gid=GA1.2.1574728070.1591928993; pepup_sess={{session_id}}; _gat=1
+
+{
+    "source":"web",
+    "source_uid":"web",
+    "step_count": [
+        {
+            "value":"12089",
+            "timestamp":"2020-06-01T00:00:00.000Z"
+        }
+    ]
+}
+
+### sleeping
+POST {{api_v2}}
+content-type: application/json; charset=UTF-8
+cookie: pepup_sess=04b708d4b6afd7fb20b1214379b7bf00
+
+{
+    "source":"web",
+    "source_uid":"web",
+    "sleeping": [
+        {
+            "value":420,
+            "timestamp":"2020-06-02T00:00:00.000Z"
+        }
+    ]
+}
