@@ -16,6 +16,7 @@ export default class PepupRpaService {
         this.url = this.configService.getEnv().pepup.url.page;
         this.browser = await puppeteer.launch({ headless: this.configService.getEnv().pepup.configs.isHeadless});
         this.page = await this.browser.newPage();
+        this.page.setViewport({width: 1200, height: 800});
     }
 
     async login(user: string, password: string) {
@@ -28,12 +29,7 @@ export default class PepupRpaService {
 
     async isLogin() {
         const url = await this.page.url();
-        return url === 'https://pepup.life/home' || 'https://pepup.life/scsk_mileage_campaigns';
-        // const title = await this.page.title();
-        // return title === 'ホーム - Pep Up(ペップアップ)';
-        // const cookies = await this.page.cookies();
-        // return cookies.some((obj) => obj.name === 'imid');
-        // return this.page.$eval('input[name="commit"]', el => el.val === 'ログイン');
+        return (url === 'https://pepup.life/home' || url === 'https://pepup.life/scsk_mileage_campaigns');
     }
 
     async getSettionId() {
@@ -104,7 +100,6 @@ export default class PepupRpaService {
                 await this.checkModal();
             };
         };
-        // await this.captureResult(url, `${fromDateObj.str.date}_${toDateObj.str.date}`);
     }
 
     private async checkModal() {
@@ -127,8 +122,8 @@ export default class PepupRpaService {
         await (await this.page.$(closeSelector)).click();
     }
 
-    private async captureResult(url: string, name: string) {
-        await this.page.goto(url, {waitUntil: "domcontentloaded"});
-        await this.page.screenshot({path: `../asset/storage/${name}.png`});
+    public async captureResult(url: string, name: string) {
+        await this.page.goto(url, {waitUntil: "networkidle2"});
+        await this.page.screenshot({path: `./src/asset/storage/${name}.png`, fullPage: true});
     }
 }

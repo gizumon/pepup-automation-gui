@@ -13,6 +13,7 @@ window.onload = function () {
  * Post api request
  */
 function regist() {
+    onLoading();
     const obj = {
         'loginId': $('#loginId').val(),
         'password': $('#password').val(),
@@ -32,7 +33,13 @@ function regist() {
     if (errorArr.length === 0) {
         // google.script.run.withSuccessHandler(onSuccess).regist(JSON.stringify(obj));
         $.post('./regist', obj).done((data) => {
-            console.log('data', data);
+            console.log('Resigt success:', data);
+            $('#modalSuccess').modal('show');
+            offLoading();
+        }).fail((err) => {
+            console.log('Regist failed:', err);
+            $('#modalFailed').modal('show');
+            offLoading();
         });
         console.log('success');
     } else {
@@ -40,6 +47,7 @@ function regist() {
             errorMsgEl.append(createMsgEl(msg));            
         });
         errorMsgEl.removeClass("hidden");
+        offLoading();
     }
 }
 
@@ -73,7 +81,7 @@ function validate(obj) {
     ) {
         errorArr.push(`現在より先の日付は登録できません`);
     }
-    if (dateFrom.getTime() >= dateTo.getTime()) {
+    if (dateFrom.getTime() > dateTo.getTime()) {
         errorArr.push(`日付の範囲が正しいか確認してください`);
     }
     // validate for Steps
@@ -110,4 +118,14 @@ function createMsgEl(msg) {
     const el = document.createElement('li');
     el.innerHTML = msg;
     return el;
+}
+
+function onLoading() {
+    $('#loading').removeClass('hidden');
+    $('#registBtn').addClass('hidden');
+}
+
+function offLoading() {
+    $('#loading').addClass('hidden');
+    $('#registBtn').removeClass('hidden');
 }

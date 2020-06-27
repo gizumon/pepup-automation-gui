@@ -25,7 +25,7 @@ h1 {
     overflow-x: auto;
 }
 .hidden {
-    display: none;
+    display: none!important;
 }
 
 .form-group {

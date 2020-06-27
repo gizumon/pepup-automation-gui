@@ -4,6 +4,7 @@ import PepupApiService from '../../services/pepupApiService';
 import ConfigService from '../../services/configService';
 import utils from '../../utils/utilityFunctions';
 import axios from 'axios';
+import moment from 'moment';
 
 const config1 = {
     loginId: "test_id",
@@ -50,7 +51,7 @@ describe('Pepup api functions [standard]', () => {
     const test = new PepupApiService(dummyConfigService);
     it('CASE1: Do Constructor (initialize)', () => {
         const test1 = new PepupApiService(dummyConfigService);
-        expect(test1['apiUrl']).toBe('https://pepup.life/api/v1/@me/measurements');
+        expect(test1['apiUrl']).toBe('https://pepup.life/api/v2/@me/measurements');
     });
     it('CASE2: Set session id = dummy_session', () => {
         test.setSessionId('dummy_session');
@@ -67,7 +68,7 @@ describe('Pepup api functions [standard]', () => {
     });
     it('CASE4: Regist sleeping should be success', async () => {
         (axios.post as any).mockResolvedValue([]);
-        await test.registSleeping(new Date('2020-01-01')).then(() => {
+        await test.registSleeping(moment.utc('2020-01-01')).then(() => {
             expect('success').toBe('success');
         }).catch(() => {
             expect('failure').toBe('success');
@@ -75,7 +76,7 @@ describe('Pepup api functions [standard]', () => {
     });
     it('CASE5: Regist step should be success', async () => {
         (axios.post as any).mockResolvedValue([]);
-        await test.registStep(new Date('2020-01-01')).then(() => {
+        await test.registStep(moment.utc('2020-01-01')).then(() => {
             expect('success').toBe('success');
         }).catch(() => {
             expect('failure').toBe('success');
@@ -126,8 +127,8 @@ describe('Pepup api functions [standard]', () => {
     });
     it('CASE9: Regist all should be success', async () => {
         (axios.post as any).mockResolvedValue([]);
-        const from = dummyConfigService.createDateObj(new Date('2020-01-01'));
-        const to = dummyConfigService.createDateObj(new Date('2020-01-20'));
+        const from = dummyConfigService.createDateObj('2020-01-01');
+        const to = dummyConfigService.createDateObj('2020-01-20');
         await test.registAll(from, to).then(() => {
             expect('success').toBe('success');
         }).catch(() => {
@@ -141,22 +142,22 @@ describe('Pepup api functions [irregular]', () => {
     const test = new PepupApiService(dummyConfigService);
     it('CASE1: Regist sleeping should be failed', async () => {
         (axios.post as any).mockRejectedValue('error');
-        await test.registSleeping(new Date('2020-01-01')).then(() => {
+        await test.registSleeping(moment.utc('2020-01-01')).then(() => {
             expect('success').toBe('failure');
         }).catch(() => {
             expect('failure').toBe('failure');
         });
     });
     it('CASE2: Regist step should be failed', async () => {
-        await test.registStep(new Date('2020-01-01')).then(() => {
+        await test.registStep(moment.utc('2020-01-01')).then(() => {
             expect('success').toBe('failure');
         }).catch(() => {
             expect('failure').toBe('failure');
         });
     });
     it('CASE3: Regist all should be failed', async () => {
-        const from = dummyConfigService.createDateObj(new Date('2020-01-01'));
-        const to = dummyConfigService.createDateObj(new Date('2020-01-20'));
+        const from = moment.utc('2020-01-01');
+        const to = moment.utc('2020-01-20');
         await test.registAll(from, to).then(() => {
             expect('success').toBe('failure');
         }).catch(() => {
