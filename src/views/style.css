@@ -29,7 +29,13 @@ h1 {
 }
 
 .form-group {
-    margin: 1rem;
+    margin: 0.5rem;
+}
+
+.label {
+    display: inline-block;
+    margin-bottom: -0.5rem;
+    margin-top: .5rem;
 }
 
 .lead {

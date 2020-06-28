@@ -2,8 +2,9 @@
  * Initialize form inputs
  */
 window.onload = function () {
-    const today = new Date();
-    const firstDay = new Date();
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
     firstDay.setDate(1);
     $('#dateFrom').val(dateToHtml(firstDay));
     $('#dateTo').val(dateToHtml(today));
@@ -56,9 +57,11 @@ function regist() {
  * @param {*} obj 
  */
 function validate(obj) {
-    const today = new Date();
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
     const minSteps = 0;
     const maxSteps = 20000;
+    const minDate = 60 * (1000 * 60 * 60 * 24);
     // convert date string
     const dateFrom = new Date(obj.date.from);
     const dateTo = new Date(obj.date.to);
@@ -73,16 +76,23 @@ function validate(obj) {
         !obj.stepsRange.from ||
         !obj.stepsRange.to
     ) {
-        errorArr.push("未入力欄がないか確認してください");
+        errorArr.push("なんか入力忘れてます、たぶん");
     }
     // Validate for Date
-    if (dateFrom.getTime() >= today.getTime() ||
-        dateTo.getTime() >= today.getTime()
+    console.log(today.getTime() - dateFrom.getTime(), minDate);
+    console.log(today.getTime() - dateTo.getTime(), minDate);
+    if (today.getTime() - dateFrom.getTime() > minDate ||
+        today.getTime() - dateTo.getTime() > minDate
     ) {
-        errorArr.push(`現在より先の日付は登録できません`);
+        errorArr.push(`登録日付は過去2ヵ月以内でたのんます。。`);
+    }
+    if (today.getTime() - dateFrom.getTime() < 0 ||
+        today.getTime() - dateTo.getTime() < 0
+    ) {
+        errorArr.push(`未来の日付は登録だめ`);
     }
     if (dateFrom.getTime() > dateTo.getTime()) {
-        errorArr.push(`日付の範囲が正しいか確認してください`);
+        errorArr.push(`日付の範囲あやしいかも`);
     }
     // validate for Steps
     if (obj.stepsRange.from < minSteps ||
@@ -90,10 +100,10 @@ function validate(obj) {
         obj.stepsRange.to < minSteps ||
         obj.stepsRange.to > maxSteps
     ) {
-        errorArr.push(`歩数の入力欄の値が正しいか確認してください ( ${minSteps}~${maxSteps} )`);
+        errorArr.push(`歩数の入力欄が怪しいかも ( ${minSteps}~${maxSteps} )`);
     }
     if (obj.stepsRange.from >= obj.stepsRange.to) {
-        errorArr.push(`歩数の範囲が確認してください`);
+        errorArr.push(`歩数の範囲おかしいかも`);
     }
     return errorArr;
 }
@@ -106,7 +116,6 @@ function dateToHtml(dateObj) {
     const thisYear = dateObj.getFullYear(); 
     const thisMonth = ('00' + (dateObj.getMonth() + 1)).slice(-2);
     const thisDay = ('00' + dateObj.getDate()).slice(-2);
-    console.log(thisYear, thisMonth, thisDay);
     return thisYear + '-' + thisMonth + '-' + thisDay;
 }
 
@@ -129,5 +138,7 @@ function onLoading() {
 function offLoading() {
     $('#loading').addClass('hidden');
     $('#registBtn').removeClass('hidden');
-    $('#modalLoading').modal('hide');
+    setTimeout(function() {
+        $('#modalLoading').modal('hide');
+    }, 1000);
 }
