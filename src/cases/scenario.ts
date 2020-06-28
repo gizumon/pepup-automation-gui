@@ -63,7 +63,7 @@ export default class Senario {
             isSuccess = false;
         });
 
-        await this.captureAll(from, to);
+        // await this.captureAll(from, to);
         await this.rpaService.closeBrowser();
 
         return [isSuccess, isSuccess? 'INFO::[Message]Success!::[ID]${this.loginId}': message];
@@ -76,5 +76,6 @@ export default class Senario {
             await this.rpaService.captureResult(url, `${target.format('YYYYMM')}-${this.loginId}`);
             target.add(1, 'month');
         }
+        await this.rpaService.closeBrowser();
     }
 }
