@@ -123,9 +123,11 @@ function createMsgEl(msg) {
 function onLoading() {
     $('#loading').removeClass('hidden');
     $('#registBtn').addClass('hidden');
+    $('#modalLoading').modal('show');
 }
 
 function offLoading() {
     $('#loading').addClass('hidden');
     $('#registBtn').removeClass('hidden');
+    $('#modalLoading').modal('hide');
 }

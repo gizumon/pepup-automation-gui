@@ -57,6 +57,21 @@
         <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
         Loading...
       </button>
+      <!-- Loading modal -->
+      <div class="modal fade" id="modalLoading" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="d-flex justify-content-center">
+                <div class="spinner-border text-info m-5" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Success modal -->
       <div class="modal fade" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
@@ -68,6 +83,9 @@
             </div>
             <div class="modal-body">
               Success!<br>
+              <div id="resultContent" class="result-display">
+                <!-- <img src="./storage/test.png"> -->
+              </div>
               <a href="https://pepup.life/scsk_mileage_campaigns">Please confirm to update pepup info</a>
             </div>
             <div class="modal-footer">
@@ -76,6 +94,7 @@
           </div>
         </div>
       </div>
+      <!-- Failed modal -->
       <div class="modal fade" id="modalFailed" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">

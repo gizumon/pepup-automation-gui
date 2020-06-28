@@ -124,6 +124,10 @@ export default class PepupRpaService {
 
     public async captureResult(url: string, name: string) {
         await this.page.goto(url, {waitUntil: "networkidle2"});
-        await this.page.screenshot({path: `./src/asset/storage/${name}.png`, fullPage: true});
+        await this.page.screenshot({path: `./src/views/storage/${name}.png`, fullPage: true});
+    }
+
+    public async closeBrowser() {
+        await this.browser.close();
     }
 }

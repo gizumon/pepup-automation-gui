@@ -2,7 +2,7 @@
     "name": "pepup automation GUI",
     "version": "1.0.0",
     "description": "Pepup automation tool",
-    "environment": "default",
+    "environment": "production",
     "service": {
         "uri": "https://guarded-savannah-05576.herokuapp.com",
         "port": "3000"

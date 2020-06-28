@@ -64,6 +64,8 @@ export default class Senario {
         });
 
         await this.captureAll(from, to);
+        await this.rpaService.closeBrowser();
+
         return [isSuccess, isSuccess? 'INFO::[Message]Success!::[ID]${this.loginId}': message];
     };
 
@@ -71,7 +73,7 @@ export default class Senario {
         const target = from;
         while (target.month() <= to.month()) {
             const url = this.configService.getEnv().pepup.url.page + '/' + from.year() + '/' + (from.month() + 1);
-            await this.rpaService.captureResult(url, `${target.format('YYYYMMDD')}-${this.loginId}`);
+            await this.rpaService.captureResult(url, `${target.format('YYYYMM')}-${this.loginId}`);
             target.add(1, 'month');
         }
     }
