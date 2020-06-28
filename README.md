@@ -24,3 +24,10 @@ Pepup自動化ツールのGUIバージョン
   curl https://raw.githubusercontent.com/Microsoft/TypeScript-Node-Starter/master/tsconfig.json > tsconfig.json
   ```
 
+# Release memo for Heroku
+* Need to add the following buildpacks to enable to use puppeteer in Heroku environment
+  ```shell
+  heroku buildpacks:clear
+  heroku buildpacks:add --index 1 https://github.com/jontewks/puppeteer-heroku-buildpack
+  heroku buildpacks:add --index 1 heroku/nodejs
+  ```

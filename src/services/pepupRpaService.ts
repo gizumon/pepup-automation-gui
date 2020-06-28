@@ -13,6 +13,7 @@ export default class PepupRpaService {
     }
 
     async initialize() {
+        console.log(`Launch browser Headless mode is : ${this.configService.getEnv().pepup.configs.isHeadless}`);
         this.url = this.configService.getEnv().pepup.url.page;
         this.browser = await puppeteer.launch({
             headless: this.configService.getEnv().pepup.configs.isHeadless,
