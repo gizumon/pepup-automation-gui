@@ -16,7 +16,7 @@
             ],
             "node-config-ts": [ "config/Config.d.ts" ]
         },
-        "lib": [ "es5", "es6" ],
+        "lib": [ "es5", "es6", "dom" ],
         "types": [ "koa", "jest" ]
     },
     "include": [
