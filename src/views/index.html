@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,8 +20,8 @@
     <div class="main container">
       <div class="content">
         <div class="card">
-          <div class="card-header h2 lead">Login information</div>
-          <label class="col-4 label">Login ID</label>
+          <div class="card-header h2 lead">Login</div>
+          <label class="col-4 label">ID</label>
           <div class="form-group row">
             <input id="loginId" class="col-12 form-control" type="email" placeholde="Please input login ID..." autocomplete="on">
           </div>
@@ -36,18 +36,18 @@
           </div> -->
         </div><br>
         <div class="card">
-          <div class="card-header h2 lead">Input information</div>
+          <div class="card-header h2 lead">Input</div>
           <label class="col-4 label">日付</label>
           <div class="form-group row">
-            <input id="dateFrom" class="col-5 form-control" type="date" placeholde="date from...">
+            <input type="date" id="dateFrom" class="col-5 form-control" placeholde="date from..." value="2020-01-01">
             <span class="col-2 from-to">-</span>
-            <input id="dateTo" class="col-5 form-control" type="date" placeholde="date to...">
+            <input type="date" id="dateTo" class="col-5 form-control" placeholde="date to..." value="2020-01-01">  
           </div>
           <label class="col-4 label">歩数</label>
           <div class="form-group row">
-            <input id="stepsFrom" class="col-5 form-control" type="tel" placeholde="Please input steps range from..." value="8000">
+            <input type="tel" id="stepsFrom" class="col-5 form-control" placeholde="Please input steps range from..." value="8000">
             <span class="col-2 from-to">-</span>
-            <input id="stepsTo" class="col-5 form-control" type="tel" placeholde="Please input steps range to..." value="12000">
+            <input type="tel" id="stepsTo" class="col-5 form-control" placeholde="Please input steps range to..." value="12000">  
           </div>
         </div>
       </div><br>
@@ -84,9 +84,9 @@
             </div>
             <div class="modal-body">
               Success!<br>
-              <div id="resultContent" class="result-display">
-                <!-- <img src="./storage/test.png"> -->
-              </div>
+              <!-- <div id="resultContent" class="result-display">
+                <img src="./storage/test.png">
+              </div> -->
               <a href="https://pepup.life/scsk_mileage_campaigns">Please confirm to update pepup info</a>
             </div>
             <div class="modal-footer">
