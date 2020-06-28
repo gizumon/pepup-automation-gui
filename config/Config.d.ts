@@ -40,7 +40,7 @@ declare module "node-config-ts" {
     port: string
   }
   interface Settings {
-    htmlDateFromat: string
+    htmlDateFormat: string
   }
   export const config: Config
   export type Config = IConfig

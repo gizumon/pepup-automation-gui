@@ -21,8 +21,8 @@ export default class ValidationService {
             console.warn(message);
             return [false, message];
         }
-        const dateFrom = moment(data.date.from, c.settings.htmlDateFromat);
-        const dateTo = moment(data.date.to, c.settings.htmlDateFromat);
+        const dateFrom = moment(data.date.from, c.settings.htmlDateFormat);
+        const dateTo = moment(data.date.to, c.settings.htmlDateFormat);
         const stepFrom = Number(data.stepsRange.from);
         const stepTo = Number(data.stepsRange.to);
 

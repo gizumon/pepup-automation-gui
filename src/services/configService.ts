@@ -89,6 +89,6 @@ export default class ConfigService {
      * @return IDateObject
      */
     createDateObj(date: string) : moment.Moment {
-        return moment.utc(date, this.getEnv().settings.htmlDateFromat);
+        return moment.utc(date, this.getEnv().settings.htmlDateFormat);
     }
 }
