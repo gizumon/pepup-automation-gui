@@ -14,7 +14,13 @@ export default class PepupRpaService {
 
     async initialize() {
         this.url = this.configService.getEnv().pepup.url.page;
-        this.browser = await puppeteer.launch({ headless: this.configService.getEnv().pepup.configs.isHeadless});
+        this.browser = await puppeteer.launch({
+            headless: this.configService.getEnv().pepup.configs.isHeadless,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+            ]
+        });
         this.page = await this.browser.newPage();
         this.page.setViewport({width: 1200, height: 800});
     }
