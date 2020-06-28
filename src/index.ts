@@ -1,5 +1,6 @@
 import Koa from "koa";
 import Router from "koa-router";
+import favicon from "koa-favicon";
 
 import logger from "koa-logger";
 import json from "koa-json";
@@ -23,6 +24,7 @@ const PORT = process.env.PORT || config.service.port;
 app.use(json());
 app.use(logger());
 app.use(bodyParser());
+app.use(favicon(__dirname + '/views/favicon.ico'));
 
 /** Routes */
 app.use( router.routes() ).use( router.allowedMethods() );
