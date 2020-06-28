@@ -16,7 +16,8 @@ const validation = new ValidationService();
 
 const app = new Koa();
 const router = new Router();
-const PORT = config.service.port;
+const PORT = process.env.PORT || config.service.port;
+
 
 /** Middlewares */
 app.use(json());
