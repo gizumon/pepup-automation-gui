@@ -35,18 +35,13 @@ render(app, {
     debug: true
 });
 
-// app.use(async function (ctx) {
-//     await ctx.render('index');
-// });
-
 router.get('/', async (ctx: Koa.Context, next: () => Promise<any>) => {
-    await ctx.render('index');
+    await ctx.render('./index');
     await next();
 });
 
 router.post( '/regist', async (ctx: Koa.Context, next: () => Promise<any>) => {
     const data = ctx.request.body;
-    // console.log('request', data);
     const [isValid, validMsg] = validation.validateRequest(data);
     if (!isValid) {
         ctx.status = 400;
@@ -56,7 +51,7 @@ router.post( '/regist', async (ctx: Koa.Context, next: () => Promise<any>) => {
 
     const senario = new Senario(data);
     const [isSuccess, registMsg] = await senario.registAll();
-    console.log('regist result', isSuccess);
+
     if (!isSuccess) {
         ctx.status = 500;
         ctx.body = {'message': registMsg};

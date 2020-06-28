@@ -1,3 +1,4 @@
-node_modules
-src/asset/storage
-src/views/storage
+/node_modules
+/src/asset/storage
+/src/views/storage
+/dist/*
