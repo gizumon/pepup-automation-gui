@@ -60,7 +60,7 @@
     "start": "ts-node ./src/index.ts",
     "watch": "nodemon",
     "build": "npm run clean && npm run build-typescript && npm run cp-statics",
-    "clean": "rm -r ./dist",
+    "clean": "rm -rf ./dist",
     "build-typescript": "tsc",
     "cp-statics": "cp -r ./src/views ./dist/views",
     "test": "jest --watch",
