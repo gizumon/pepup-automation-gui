@@ -65,3 +65,7 @@ h1 {
 #resultContent {
     width: 100%;
 }
+
+.btn {
+    margin-bottom: 20px;
+}

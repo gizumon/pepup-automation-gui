@@ -133,8 +133,12 @@ export default class PepupRpaService {
     public async captureResult(url: string, name: string) {
         await this.page.goto(url, {waitUntil: "networkidle2"});
         console.log('dirname', __dirname);
-        await this.page.screenshot({path: `./src/views/storage/${name}.png`, fullPage: true});
-        console.log(`INFO::[Message]Success capture result::[url]::./src/views/storage/${name}.png`);
+        try {
+            await this.page.screenshot({path: `${__dirname}/../views/storage/${name}.png`, fullPage: true});
+            console.log(`INFO::[Message]Success capture result::[url]::${__dirname}/../views/storage/${name}.png`);
+        } catch (e) {
+            console.warn(`WARN::[Message]${e}`);
+        }
     }
 
     public async closeBrowser() {
