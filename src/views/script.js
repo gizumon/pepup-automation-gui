@@ -2,13 +2,42 @@
  * Initialize form inputs
  */
 window.onload = function () {
+    window.scrollTo(0,0);
+    initFlatPickr();
+}
+let dateFrom = '';
+let dateTo = '';
+
+function initFlatPickr() {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
     const firstDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    const minDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
     firstDay.setDate(1);
-    $('#dateFrom').val(dateToHtml(firstDay));
-    $('#dateTo').val(dateToHtml(today));
-}
+    minDay.setMonth(today.getMonth() - 2);
+    dateFrom = dateToHtml(firstDay);
+    dateTo = dateToHtml(today);
+
+    const config = {
+        mode: 'range',
+        minDate: dateToHtml(minDay),
+        maxDate: dateToHtml(today),
+        defaultDate: [dateToHtml(firstDay), dateToHtml(today)],
+        onChange: function(selectedDates, dateStr, instance) {
+            console.log(selectedDates, dateStr, instance);
+            dateFrom = selectedDates.length === 0 ? null
+                     : selectedDates.length === 1 ? dateToHtml(selectedDates[0])
+                     : selectedDates.length === 2 ? dateToHtml(selectedDates[0])
+                     : null;
+            dateTo   = selectedDates.length === 0 ? null
+                     : selectedDates.length === 1 ? dateToHtml(selectedDates[0])
+                     : selectedDates.length === 2 ? dateToHtml(selectedDates[1])
+                     : null;
+        }
+    };
+
+    const fp = $("#datePickr").flatpickr(config);
+} 
 
 /**
  * Post api request
@@ -20,14 +49,15 @@ function regist() {
         'password': $('#password').val(),
         // 'sessionId': document.getElementById('sessionId').value,
         'date': {
-            'from': $('#dateFrom').val(), 
-            'to': $('#dateTo').val()
+            'from': dateFrom,
+            'to': dateTo
         },
         'stepsRange': {
             'from': Number($('#stepsFrom').val()),
             'to': Number($('#stepsTo').val())
         }
     };
+    console.log('request', obj);
     const errorArr = validate(obj);
     const errorMsgEl = $('#errorMsg');
     errorMsgEl.addClass('hidden').empty();
@@ -35,6 +65,10 @@ function regist() {
         // google.script.run.withSuccessHandler(onSuccess).regist(JSON.stringify(obj));
         $.post('./regist', obj).done((data) => {
             console.log('Resigt success:', data);
+            const from = new Date(obj.date.from);
+            const prefix = `./storage/${from.getFullYear()}${('00' + (from.getMonth() + 1)).slice(-2)}`
+            $('#resultLink').attr('href', `${prefix}-${obj.loginId}.png`);
+            $('#resultContent').attr('src', `${prefix}-${obj.loginId}.png`);
             $('#modalSuccess').modal('show');
             offLoading();
         }).fail((err) => {

@@ -11,7 +11,7 @@ import { config } from "node-config-ts";
 import Senario from './cases/scenario';
 import ValidationService from './services/validationService';
 
-const render = require('koa-ejs');
+const serve = require('koa-static');
 const path = require('path');
 const validation = new ValidationService();
 
@@ -25,22 +25,10 @@ app.use(json());
 app.use(logger());
 app.use(bodyParser());
 app.use(favicon(__dirname + '/views/favicon.ico'));
+app.use(serve(`${__dirname}/views`));
 
 /** Routes */
 app.use( router.routes() ).use( router.allowedMethods() );
-
-render(app, {
-    root: path.join(__dirname, 'views'),
-    layout: 'index',
-    viewExt: 'html',
-    cache: false,
-    debug: true
-});
-
-router.get('/', async (ctx: Koa.Context, next: () => Promise<any>) => {
-    await ctx.render('./index');
-    await next();
-});
 
 router.post( '/regist', async (ctx: Koa.Context, next: () => Promise<any>) => {
     const data = ctx.request.body;

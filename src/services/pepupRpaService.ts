@@ -52,7 +52,7 @@ export default class PepupRpaService {
         let targetDate = moment(fromDate);
 
         // roop if regist date is smaller than lastDateObj.date
-        while (targetDate.isSameOrBefore(toDate)) {
+        while (targetDate.isSameOrAfter(fromDate) && targetDate.isSameOrBefore(toDate)) {
             const endDate = moment(targetDate).endOf('month').isBefore(toDate) ? moment(fromDate).endOf('month'): toDate;
             console.log(targetDate, endDate);
             try {
@@ -94,7 +94,6 @@ export default class PepupRpaService {
                 console.log('btn', (await $btn.getProperty('textContent')).jsonValue());
                 const btnDay = Number(await (await $btn.getProperty('textContent')).jsonValue());
                 const btnDate = moment(fromDate).date(btnDay);
-                console.log('btn day', btnDay, btnDate);
                 // Continue if btn day is not a number OR btn date is smaller than target date
                 if (btnDay === NaN ||
                     btnDay === 0 ||
@@ -105,6 +104,7 @@ export default class PepupRpaService {
                 if (btnDate.isAfter(toDate)) { break; }
                 await $btn.click();
                 await this.checkModal();
+                console.log('btn day', btnDay, btnDate);
             };
         };
     }
@@ -114,6 +114,7 @@ export default class PepupRpaService {
         const labelsSelector = '.ycydyz-0 label';
         const closeSelector = '.ycydyz-0 button';
 
+        await this.page.waitForSelector(labelsSelector);
         const $labels = await this.page.$$(labelsSelector);
         for (let i=0; i < $labels.length; i++) {
             const $label = $labels[i];
@@ -121,7 +122,7 @@ export default class PepupRpaService {
             console.log('label', text);
             const $checkBox = await $label.$('input');
             const checked = await (await $checkBox.getProperty('checked')).jsonValue();
-            console.log(checked);
+            console.log('isChecked', checked);
             if (!checked) {
                 $checkBox.click();
             }
@@ -131,7 +132,9 @@ export default class PepupRpaService {
 
     public async captureResult(url: string, name: string) {
         await this.page.goto(url, {waitUntil: "networkidle2"});
+        console.log('dirname', __dirname);
         await this.page.screenshot({path: `./src/views/storage/${name}.png`, fullPage: true});
+        console.log(`INFO::[Message]Success capture result::[url]::./src/views/storage/${name}.png`);
     }
 
     public async closeBrowser() {

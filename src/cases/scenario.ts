@@ -63,7 +63,7 @@ export default class Senario {
             isSuccess = false;
         });
 
-        // await this.captureAll(from, to);
+        await this.captureAll(from, to);
         await this.rpaService.closeBrowser();
 
         return [isSuccess, isSuccess? 'INFO::[Message]Success!::[ID]${this.loginId}': message];
