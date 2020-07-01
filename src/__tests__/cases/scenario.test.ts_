@@ -2,8 +2,8 @@ import Scenario from '../../cases/scenario';
 import moment from 'moment';
 
 const config1 = {
-    loginId: "a.g0430t.s@gmail.com",
-    password: "nara8739",
+    loginId: "",
+    password: "",
     date: {
         from: "2020-01-01", 
         to: "2020-01-02"

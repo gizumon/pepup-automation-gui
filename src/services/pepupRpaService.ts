@@ -131,7 +131,8 @@ export default class PepupRpaService {
     }
 
     public async captureResult(url: string, name: string) {
-        await this.page.goto(url, {waitUntil: "networkidle2"});
+        await this.page.goto(url, {waitUntil: "domcontentloaded"});
+        // await this.page.waitForNavigation({timeout: 10000, waitUntil: 'networkidle2'});
         console.log('dirname', __dirname);
         try {
             await this.page.screenshot({path: `${__dirname}/../views/storage/${name}.png`, fullPage: true});

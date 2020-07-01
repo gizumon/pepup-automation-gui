@@ -4,6 +4,10 @@
 window.onload = function () {
     window.scrollTo(0,0);
     initFlatPickr();
+    $('#modalInform').modal('show');
+    $('.infoBtn').on('click', function() {
+        $('#modalInform').modal('show');
+    });
 }
 let dateFrom = '';
 let dateTo = '';
@@ -14,7 +18,7 @@ function initFlatPickr() {
     const firstDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
     const minDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
     firstDay.setDate(1);
-    minDay.setMonth(today.getMonth() - 2);
+    minDay.setDate(today.getDate() - 45);
     dateFrom = dateToHtml(firstDay);
     dateTo = dateToHtml(today);
 
@@ -110,7 +114,7 @@ function validate(obj) {
         !obj.stepsRange.from ||
         !obj.stepsRange.to
     ) {
-        errorArr.push("なんか入力忘れてます、たぶん");
+        errorArr.push("なんか入力忘れてる気が。。");
     }
     // Validate for Date
     console.log(today.getTime() - dateFrom.getTime(), minDate);
@@ -118,15 +122,15 @@ function validate(obj) {
     if (today.getTime() - dateFrom.getTime() > minDate ||
         today.getTime() - dateTo.getTime() > minDate
     ) {
-        errorArr.push(`登録日付は過去2ヵ月以内でたのんます。。`);
+        errorArr.push(`登録日付は過去2ヵ月以内で。。`);
     }
     if (today.getTime() - dateFrom.getTime() < 0 ||
         today.getTime() - dateTo.getTime() < 0
     ) {
-        errorArr.push(`未来の日付は登録だめ`);
+        errorArr.push(`未来の日付は登録だめ！`);
     }
     if (dateFrom.getTime() > dateTo.getTime()) {
-        errorArr.push(`日付の範囲あやしいかも`);
+        errorArr.push(`日付の範囲あやしいかも。。`);
     }
     // validate for Steps
     if (obj.stepsRange.from < minSteps ||
@@ -134,10 +138,10 @@ function validate(obj) {
         obj.stepsRange.to < minSteps ||
         obj.stepsRange.to > maxSteps
     ) {
-        errorArr.push(`歩数の入力欄が怪しいかも ( ${minSteps}~${maxSteps} )`);
+        errorArr.push(`歩数の入力欄が怪しいかも。。 ( ${minSteps}~${maxSteps} )`);
     }
     if (obj.stepsRange.from >= obj.stepsRange.to) {
-        errorArr.push(`歩数の範囲おかしいかも`);
+        errorArr.push(`歩数の範囲おかしいかも。。`);
     }
     return errorArr;
 }

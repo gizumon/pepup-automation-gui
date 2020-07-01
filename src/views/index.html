@@ -21,7 +21,10 @@
     <div class="main container">
       <div class="content">
         <div class="card">
-          <div class="card-header h2 lead">Login</div>
+          <div class="card-header h2 lead">
+            <span>Login</span>
+            <span class="infoBtn"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i></span>
+          </div>
           <label class="col-4 label">ID</label>
           <div class="input-group col-12">
             <div class="input-group-prepend">
@@ -38,8 +41,11 @@
           </div>
         </div><br>
         <div class="card">
-          <div class="card-header h2 lead">Input</div>
-          <label class="col-4 label">日付</label>
+          <div class="card-header h2 lead">
+            <span>Input</span>
+            <span class="infoBtn"><i class="fa fa-question-circle fa-fw" aria-hidden="true"></i></span>
+          </div>
+          <label class="col-12 label">日付</label>
           <div class="input-group col-12">
             <div class="input-group-prepend">
               <span class="input-group-text"><i class="fa fa-calendar fa-fw"></i></span>
@@ -47,7 +53,7 @@
             <input type="text" id="datePickr" class="form-control" placeholde="date from..." readonly="readonly">
             <!-- <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1"> -->
           </div>
-          <label class="col-4 label">歩数</label>
+          <label class="col-12 label">歩数</label>
           <!-- <div class="form-group row">
             <input type="tel" id="stepsFrom" class="col-5 form-control" placeholde="Please input steps range from..." value="8000">
             <span class="col-2 from-to">-</span>
@@ -67,12 +73,15 @@
       <button id="registBtn" type="button" class="btn btn-lg btn-primary mx-auto d-block" onclick="regist()">Regist</button>
       <button id= "loading" class="btn btn-lg btn-primary mx-auto d-block hidden" type="button" disabled>
         <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-        Loading...
+        登録中...
       </button>
       <!-- Loading modal -->
       <div class="modal fade" id="modalLoading" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <div class="modal-content">
+            <div class="modal-header">
+              <span class="modal-title" id="label1">がんばって登録してます...</span>
+            </div>
             <div class="modal-body">
               <div class="d-flex justify-content-center">
                 <div class="spinner-border text-info m-5" role="status">
@@ -97,7 +106,7 @@
               <div class="result-display">
                 <a id="resultLink" href><img id="resultContent" alt="result" src></a>
               </div>
-              <a href="https://pepup.life/scsk_mileage_campaigns">Please confirm to update pepup info</a>
+              <span>失敗してたら<a href="https://pepup.life/scsk_mileage_campaigns">こっち</a>から手動でお願いします</span>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -117,6 +126,38 @@
             </div>
             <div class="modal-body">
               Please check your input parameters...
+              <div class="failed-info"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Information modal -->
+      <div class="modal fade" id="modalInform" tabindex="-1" role="dialog" aria-labelledby="label1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="label1">
+                <span>How to use</span>
+                <span class="infoBtn"><i class="fa fa-info-circle fa-fw" aria-hidden="true"></i></span>
+              </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <span>Pepupに怒られちゃうので優しく使ってください</span>
+              <ul class="info-list">
+                <li>IDにPepupのユーザー名を入力してね</li>
+                <li>PasswordにPepupのをパスワードを入力してね</li>
+                <li>日付に登録する日付範囲を入力してね</li>
+                <li>歩数に登録する歩数範囲を入力してね</li>
+                <li>睡眠時間は7時間で登録されます</li>
+                <li>登録できていることちゃんと確認してね</li>
+                <li>バグ見つけたら教えてね</li>
+              </ul>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

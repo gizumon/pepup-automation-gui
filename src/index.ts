@@ -10,6 +10,7 @@ import { config } from "node-config-ts";
 
 import Senario from './cases/scenario';
 import ValidationService from './services/validationService';
+import { IRegistRequestConfig } from "./services/configService";
 
 const serve = require('koa-static');
 const path = require('path');
@@ -31,13 +32,14 @@ app.use(serve(`${__dirname}/views`));
 app.use( router.routes() ).use( router.allowedMethods() );
 
 router.post( '/regist', async (ctx: Koa.Context, next: () => Promise<any>) => {
-    const data = ctx.request.body;
+    const data: IRegistRequestConfig = ctx.request.body;
     const [isValid, validMsg] = validation.validateRequest(data);
     if (!isValid) {
         ctx.status = 400;
         ctx.body = {'message': validMsg};
         return await next();
     }
+    console.log(`INFO::[ID]${data.loginId}::[Message]Start regist`);
 
     const senario = new Senario(data);
     const [isSuccess, registMsg] = await senario.registAll();
