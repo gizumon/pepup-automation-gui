@@ -4,6 +4,7 @@ import moment from 'moment';
 
 export type IEnvironmentConfig = IConfig;
 
+// for POST /regist
 export interface IRegistRequestConfig {
     loginId: string,
     password: string,
@@ -44,6 +45,51 @@ export interface IPepupMeasurementReq_V2 {
 export interface IMeasurementData_V2 {
     value: string | number,
     timestamp: string
+}
+
+// for GET /scraping
+export interface IScrapingRequestConfig {
+    url: string,
+    cssSelector?: string, 
+    xPathSelector?: string
+}
+
+// for POST /scraping/bulk
+export interface IScrapingBulkRequestConfig {
+    type: string,
+    configs: IScrapingConfig[]
+}
+
+export interface IScrapingConfig {
+    id?: string,
+    name: string,
+    url: string,
+    selectors: ISelectors[],
+    capture?: boolean
+}
+
+export interface ISelectors {
+    id?: string,
+    name: string,
+    cssSelector?: string,
+    xPathSelector?: string
+}
+
+export interface IScrapingResponseData {
+    type: string,
+    results: IScrapingResult[]
+}
+
+export interface IScrapingResult {
+    id?: string,
+    name: string,
+    contents: IScrapingContent[]
+}
+
+export interface IScrapingContent {
+    id?: string,
+    name: string,
+    value: string
 }
 
 export default class ConfigService {

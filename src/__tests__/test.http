@@ -19,3 +19,54 @@ content-type: application/json; charset=UTF-8
         "to": "12000"
     }
 }
+
+###
+POST {{rootUrl}}/scraping/bulk
+content-type: application/json; charset=UTF-8
+
+{
+    "type": "sf-score",
+    "configs": [{
+        "id": "test_id",
+        "name": "test_name",
+        "url": "https://trailblazer.me/id/tsekikawa",
+        "selectors": [{
+            "id": "1",
+            "name": "badge",
+            "xPathSelector": "//*[@id='lightning']/div/div/div[2]/div/div[2]/div/div/div[2]/c-trailhead-rank/c-lwc-card/article/div/slot/div[2]/c-lwc-tally[1]/span/span[1]"
+        },{
+            "id": "2",
+            "name": "point",
+            "xPathSelector": "//*[@id='lightning']/div/div/div[2]/div/div[2]/div/div/div[2]/c-trailhead-rank/c-lwc-card/article/div/slot/div[2]/c-lwc-tally[2]/span/span[1]"
+        },{
+            "id": "3",
+            "name": "trail",
+            "xPathSelector": "//*[@id='lightning']/div/div/div[2]/div/div[2]/div/div/div[2]/c-trailhead-rank/c-lwc-card/article/div/slot/div[2]/c-lwc-tally[3]/span/span[1]"
+        }]
+    }]
+}
+
+###
+@url=https://www.airtrip.jp/ticket/search?source=listing.adwords.airtrip.jp&ek_type=SR&business=&F1Departure=TKY&F1Destination=KIX&F1Year=&F1Month=7&F1Day=19&F2Year=&F2Month=7&F2Day=20&F2Departure=KIX&F2Destination=TKY
+@url_error=https://www.airtrip.jp_error
+
+@url2=https://trailblazer.me/id/tsekikawa
+
+@xpath=//*[@id="userForm"]/div[1]/div/ul/li[5]/button/span[2]
+@xpath2=//*[@id='lightning']/div/div/div[2]/div/div[2]/div/div/div[2]/c-trailhead-rank/c-lwc-card/article/div/slot/div[2]/c-lwc-tally[2]/span/span[1]
+@selector=%23userForm
+
+###
+GET {{rootUrl}}/scraping?url={{url}}&xPathSelector={{xpath}}
+
+###
+GET {{rootUrl}}/scraping?xPathSelector={{xpath}}&url={{url}}
+
+###
+GET {{rootUrl}}/scraping?url={{url}}&cssSelector={{selector}}
+
+###
+GET {{rootUrl}}/scraping?cssSelector={{selector}}&url={{url}}
+
+###
+GET {{rootUrl}}/scraping?url={{url_error}}

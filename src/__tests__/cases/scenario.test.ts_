@@ -20,7 +20,7 @@ const config1 = {
 //     await test1.captureAll(moment.utc(config1.date.from), moment.utc(config1.date.to));    
 // }
 
-describe('Senario service', () => {
+describe('PepupScenario service', () => {
     const test1 = new Scenario(config1);
     // it('CASE1: Regist all should be success', () => {
     //     expect(test1.registAll());

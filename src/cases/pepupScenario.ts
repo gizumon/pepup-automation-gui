@@ -3,7 +3,7 @@ import PepupRpaService from '../services/pepupRpaService';
 import ConfigService, { IRegistRequestConfig } from '../services/configService';
 
 
-export default class Senario {
+export default class PepupScenario {
     apiService: PepupApiService;
     rpaService: PepupRpaService;
     configService: ConfigService;
@@ -37,7 +37,7 @@ export default class Senario {
 
         // below 60 days between from date and to date
         if ((from.diff(to, 'days') > daysLimit)) {
-            message = `WARNING::[Message]date range need to be below ${daysLimit} days failed...::[ID]${this.loginId}::[from]${from}::[to]${to}::[Code=E000101]`;
+            message = `WARN::[Message]date range need to be below ${daysLimit} days failed...::[ID]${this.loginId}::[from]${from}::[to]${to}::[Code=E000101]`;
             console.warn(message);
             return [false, message];
         }
@@ -46,7 +46,7 @@ export default class Senario {
         if (isLogin) {
             this.apiService.setSessionId(await this.rpaService.getSettionId());
         } else {
-            message = `WARNING::[Message]Login failed...::[ID]${this.loginId}::[Code=E000102]`;
+            message = `WARN::[Message]Login failed...::[ID]${this.loginId}::[Code=E000102]`;
             console.warn(message);
             return [false, message];
         }

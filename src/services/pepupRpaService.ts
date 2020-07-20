@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer';
 import moment from 'moment';
 import ConfigService, { IRegistRequestConfig } from './configService';
 
+// TODO:Configと切り離し
 export default class PepupRpaService {
     private url: string;
     private browser: puppeteer.Browser;
@@ -58,12 +59,12 @@ export default class PepupRpaService {
             try {
                 await this.clickCalendars(targetDate, endDate);
             } catch (e) {
-                console.error(`ERROR::[Failed] regist at ${targetDate.toLocaleString()}::[Error count]${errCnt}::[Message]${e}`);
+                console.error(`WARN::[Failed]regist at ${targetDate.toLocaleString()}::[Error count]${errCnt}::[Message]`,e);
                 errCnt++;
             }
 
             if (errCnt >= errLimit) {
-                throw new Error(`[Message]Errors are over the number of limit::[date]Break at ${targetDate.toLocaleString()}`);
+                throw new Error(`ERROR::[Message]Errors are over the number of limit::[date]Break at ${targetDate.toLocaleString()}`);
                 break;
             }
 
@@ -138,7 +139,7 @@ export default class PepupRpaService {
             await this.page.screenshot({path: `${__dirname}/../views/storage/${name}.png`, fullPage: true});
             console.log(`INFO::[Message]Success capture result::[url]::${__dirname}/../views/storage/${name}.png`);
         } catch (e) {
-            console.warn(`WARN::[Message]${e}`);
+            console.warn(`ERROR::[Message]`,e);
         }
     }
 
