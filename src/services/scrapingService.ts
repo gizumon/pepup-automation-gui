@@ -24,7 +24,7 @@ export default class ScrapingService {
         try {
             await this.page.goto(url, {waitUntil: "networkidle2"});
         } catch (e) {
-            this.closeBrowser();
+            await this.closeBrowser();
             console.error(`ERROR::[Message]Failed to access::[URL]${url}::[Error]`, e);
             throw new Error(`ERROR::[Message]Failed to access::[URL]${url}::[Error]${e}`);
         }
@@ -32,8 +32,8 @@ export default class ScrapingService {
 
     async getElementsByCssSelector(selector: string): Promise<puppeteer.ElementHandle<Element>> {
         await this.page.waitForSelector(selector);
-        return await this.page.$(selector).catch((e) => {
-            this.closeBrowser();
+        return await this.page.$(selector).catch(async (e) => {
+            await this.closeBrowser();
             console.error(`ERROR::[Message]Failed to get content by css selector::[Selector]${JSON.stringify(selector)}::[Error]`, e);
             throw new Error(`ERROR::[Message]Failed to get content by css selector::[Selector]${JSON.stringify(selector)}::[Error]${e}`);
         });
@@ -45,8 +45,8 @@ export default class ScrapingService {
 
     async getElementsByXpath(selector: string): Promise<puppeteer.ElementHandle<Element>[]> {
         await this.page.waitForXPath(selector);
-        return await this.page.$x(selector).catch((e) => {
-            this.closeBrowser();
+        return await this.page.$x(selector).catch(async (e) => {
+            await this.closeBrowser();
             console.error(`ERROR::[Message]Failed to get content by xpath selector::[Selector]${JSON.stringify(selector)}::[Error]`, e);
             throw new Error(`ERROR::[Message]Failed to get content by xpath selector::[Selector]${JSON.stringify(selector)}::[Error]${e}`);
         });
@@ -64,7 +64,7 @@ export default class ScrapingService {
             await this.page.screenshot({path: `${__dirname}/../views/storage/${name}.png`, fullPage: true});
             console.log(`INFO::[Message]Success capture result::[url]::${__dirname}/../views/storage/${name}.png`);
         } catch (e) {
-            this.closeBrowser();
+            await this.closeBrowser();
             console.warn(`WARN::[Message]${e}`);
         }
     }

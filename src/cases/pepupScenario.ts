@@ -37,6 +37,7 @@ export default class PepupScenario {
 
         // below 60 days between from date and to date
         if ((from.diff(to, 'days') > daysLimit)) {
+            await this.rpaService.closeBrowser();
             message = `WARN::[Message]date range need to be below ${daysLimit} days failed...::[ID]${this.loginId}::[from]${from}::[to]${to}::[Code=E000101]`;
             console.warn(message);
             return [false, message];
@@ -46,18 +47,21 @@ export default class PepupScenario {
         if (isLogin) {
             this.apiService.setSessionId(await this.rpaService.getSettionId());
         } else {
+            await this.rpaService.closeBrowser();
             message = `WARN::[Message]Login failed...::[ID]${this.loginId}::[Code=E000102]`;
             console.warn(message);
             return [false, message];
         }
 
-        await this.rpaService.registAll(from, to).catch(() => {
+        await this.rpaService.registAll(from, to).catch(async () => {
+            await this.rpaService.closeBrowser();
             message = `ERROR::[Message]Pepup RPA is failed...::[ID]${this.loginId}::[From]${from}::[To]${to}::[Code=E000103]`;
             console.error(message);
             isSuccess = false;
         });
 
-        await this.apiService.registAll(from, to).catch(() => {
+        await this.apiService.registAll(from, to).catch(async () => {
+            await this.rpaService.closeBrowser();
             message = `ERROR::[Message]Pepup API is failed...::[ID]${this.loginId}::[From]${from}::[To]${to}::[Code]::[Code=E000104]`;
             console.error(message);
             isSuccess = false;
