@@ -36,6 +36,8 @@ export default class ScrapingScenario {
                 contents: contents
             });
         }
+
+        await this.scrapingService.closeBrowser();
         return [isSuccess, {
             type: reqData.type,
             results: results
@@ -51,6 +53,7 @@ export default class ScrapingScenario {
                            : reqData.cssSelector ? await this.scrapingService.getContentByCssSelector(reqData.cssSelector)
                            : await this.scrapingService.getContentByCssSelector('body');
         
+        await this.scrapingService.closeBrowser();
         return [isSuccess, `<html><head></head><body>${responseData}</body></html>`];
     };
 }
