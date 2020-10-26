@@ -1,5 +1,6 @@
-@rootUrl=http://localhost:3000
-@rootUrl=https://pepup-automation-gui.herokuapp.com
+# @rootUrl=http://localhost:3000
+# @rootUrl=https://pepup-automation-gui.herokuapp.com
+@rootUrl=https://prod-pepup-automation-gui.azurewebsites.net
 
 ### GET
 GET {{rootUrl}}
@@ -10,10 +11,10 @@ content-type: application/json; charset=UTF-8
 
 {
     "loginId": "a.g0430t.s@gmail.com",
-    "password": "nara8739",
+    "password": "Passw0rd",
     "date": {
-        "from": "2020-06-01", 
-        "to": "2020-06-02"
+        "from": "2020-10-15", 
+        "to": "2020-10-18"
     },
     "stepsRange": {
         "from": "8000",
@@ -59,6 +60,9 @@ content-type: application/json; charset=UTF-8
 
 ###
 GET {{rootUrl}}/scraping?url={{url}}&xPathSelector={{xpath}}
+
+###
+GET {{rootUrl}}/scraping?url={{url2}}&xPathSelector={{xpath2}}
 
 ###
 GET {{rootUrl}}/scraping?xPathSelector={{xpath}}&url={{url}}
