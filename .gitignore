@@ -1,4 +1,5 @@
 /node_modules
-/src/asset/storage
-/src/views/storage
+/src/asset/storage/*
+/src/views/storage/*
+!/src/views/storage/test.png
 /dist/*

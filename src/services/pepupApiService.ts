@@ -48,7 +48,7 @@ export default class PepupApiService {
             ]);
 
             if (errCnt >= errLimit) {
-                throw new Error(`[Message]Errors are over the number of limit::[date]Break at ${targetDate.toLocaleString()}`);
+                throw new Error(`ERROR::[Message]Errors are over the number of limit::[date]Break at ${targetDate.toLocaleString()}`);
                 break;
             }
             // Update regist date as the next day
@@ -63,8 +63,8 @@ export default class PepupApiService {
         const result = await axios.post(this.apiUrl, data, this.getHeaders()).then((res) => {
             console.log(`INFO::[URL]${this.apiUrl}::[Type]steps::[Date]${date}::[Data]${res.data}`);
         }).catch((error) => {
-            console.warn(`WARN::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Data]${error}`);
-            throw new Error(`WARNING::[URL]${this.apiUrl}::[Type]steps::[Date]${date}::[Error]${error}`);
+            console.warn(`ERROR::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Error]`,error);
+            throw new Error(`ERROR::[URL]${this.apiUrl}::[Type]steps::[Date]${date}::[Error]${error}`);
         });
     }
 
@@ -76,8 +76,8 @@ export default class PepupApiService {
         await axios.post(this.apiUrl, data, this.getHeaders()).then((res) => {
             console.log(`INFO::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Data]${res.data}`);
         }).catch((error) => {
-            console.warn(`WARN::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Data]${error}`);
-            throw new Error(`WARNING::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Error]${error}`);
+            console.warn(`ERROR::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Error]`, error);
+            throw new Error(`ERROR::[URL]${this.apiUrl}::[Type]sleeping::[Date]${date}::[Error]${error}`);
         });
     }
 

@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer';
 import moment from 'moment';
 import ConfigService, { IRegistRequestConfig } from './configService';
 
+// TODO:Configと切り離し
 export default class PepupRpaService {
     private url: string;
     private browser: puppeteer.Browser;
@@ -52,18 +53,18 @@ export default class PepupRpaService {
         let targetDate = moment(fromDate);
 
         // roop if regist date is smaller than lastDateObj.date
-        while (targetDate.isSameOrBefore(toDate)) {
+        while (targetDate.isSameOrAfter(fromDate) && targetDate.isSameOrBefore(toDate)) {
             const endDate = moment(targetDate).endOf('month').isBefore(toDate) ? moment(fromDate).endOf('month'): toDate;
             console.log(targetDate, endDate);
             try {
                 await this.clickCalendars(targetDate, endDate);
             } catch (e) {
-                console.error(`ERROR::[Failed] regist at ${targetDate.toLocaleString()}::[Error count]${errCnt}::[Message]${e}`);
+                console.error(`WARN::[Failed]regist at ${targetDate.toLocaleString()}::[Error count]${errCnt}::[Message]`,e);
                 errCnt++;
             }
 
             if (errCnt >= errLimit) {
-                throw new Error(`[Message]Errors are over the number of limit::[date]Break at ${targetDate.toLocaleString()}`);
+                throw new Error(`ERROR::[Message]Errors are over the number of limit::[date]Break at ${targetDate.toLocaleString()}`);
                 break;
             }
 
@@ -94,7 +95,6 @@ export default class PepupRpaService {
                 console.log('btn', (await $btn.getProperty('textContent')).jsonValue());
                 const btnDay = Number(await (await $btn.getProperty('textContent')).jsonValue());
                 const btnDate = moment(fromDate).date(btnDay);
-                console.log('btn day', btnDay, btnDate);
                 // Continue if btn day is not a number OR btn date is smaller than target date
                 if (btnDay === NaN ||
                     btnDay === 0 ||
@@ -105,6 +105,7 @@ export default class PepupRpaService {
                 if (btnDate.isAfter(toDate)) { break; }
                 await $btn.click();
                 await this.checkModal();
+                console.log('btn day', btnDay, btnDate);
             };
         };
     }
@@ -114,6 +115,7 @@ export default class PepupRpaService {
         const labelsSelector = '.ycydyz-0 label';
         const closeSelector = '.ycydyz-0 button';
 
+        await this.page.waitForSelector(labelsSelector);
         const $labels = await this.page.$$(labelsSelector);
         for (let i=0; i < $labels.length; i++) {
             const $label = $labels[i];
@@ -121,7 +123,7 @@ export default class PepupRpaService {
             console.log('label', text);
             const $checkBox = await $label.$('input');
             const checked = await (await $checkBox.getProperty('checked')).jsonValue();
-            console.log(checked);
+            console.log('isChecked', checked);
             if (!checked) {
                 $checkBox.click();
             }
@@ -130,8 +132,15 @@ export default class PepupRpaService {
     }
 
     public async captureResult(url: string, name: string) {
-        await this.page.goto(url, {waitUntil: "networkidle2"});
-        await this.page.screenshot({path: `./src/views/storage/${name}.png`, fullPage: true});
+        await this.page.goto(url, {waitUntil: "domcontentloaded"});
+        // await this.page.waitForNavigation({timeout: 10000, waitUntil: 'networkidle2'});
+        console.log('dirname', __dirname);
+        try {
+            await this.page.screenshot({path: `${__dirname}/../views/storage/${name}.png`, fullPage: true});
+            console.log(`INFO::[Message]Success capture result::[url]::${__dirname}/../views/storage/${name}.png`);
+        } catch (e) {
+            console.warn(`ERROR::[Message]`,e);
+        }
     }
 
     public async closeBrowser() {

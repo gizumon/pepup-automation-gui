@@ -17,7 +17,7 @@ h1 {
 }
 
 .main {
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .error-msg {
@@ -31,6 +31,13 @@ h1 {
 
 .form-group {
     margin: 0.5rem;
+}
+
+.input-group {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 
 .label {
@@ -49,9 +56,32 @@ h1 {
     line-height: 2rem;
 }
 
+.result-display {
+    width: 100%;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
 #resultContent {
     width: 100%;
-    max-height: 100px;
-    overflow-y: scroll;
-    background-image: url(./storage/test.png);
+}
+
+.btn {
+    margin-bottom: 20px;
+}
+
+#datePickr {
+    background-color: #FFF;
+}
+
+.infoBtn {
+    cursor: pointer;
+}
+
+.infoBtn:active {
+    color: darkgray;
+}
+
+.info-list {
+    padding-inline-start: 20px;
 }

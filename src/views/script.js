@@ -2,13 +2,46 @@
  * Initialize form inputs
  */
 window.onload = function () {
+    window.scrollTo(0,0);
+    initFlatPickr();
+    $('#modalInform').modal('show');
+    $('.infoBtn').on('click', function() {
+        $('#modalInform').modal('show');
+    });
+}
+let dateFrom = '';
+let dateTo = '';
+
+function initFlatPickr() {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
     const firstDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    const minDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
     firstDay.setDate(1);
-    $('#dateFrom').val(dateToHtml(firstDay));
-    $('#dateTo').val(dateToHtml(today));
-}
+    minDay.setDate(today.getDate() - 45);
+    dateFrom = dateToHtml(firstDay);
+    dateTo = dateToHtml(today);
+
+    const config = {
+        mode: 'range',
+        minDate: dateToHtml(minDay),
+        maxDate: dateToHtml(today),
+        defaultDate: [dateToHtml(firstDay), dateToHtml(today)],
+        onChange: function(selectedDates, dateStr, instance) {
+            console.log(selectedDates, dateStr, instance);
+            dateFrom = selectedDates.length === 0 ? null
+                     : selectedDates.length === 1 ? dateToHtml(selectedDates[0])
+                     : selectedDates.length === 2 ? dateToHtml(selectedDates[0])
+                     : null;
+            dateTo   = selectedDates.length === 0 ? null
+                     : selectedDates.length === 1 ? dateToHtml(selectedDates[0])
+                     : selectedDates.length === 2 ? dateToHtml(selectedDates[1])
+                     : null;
+        }
+    };
+
+    const fp = $("#datePickr").flatpickr(config);
+} 
 
 /**
  * Post api request
@@ -20,14 +53,15 @@ function regist() {
         'password': $('#password').val(),
         // 'sessionId': document.getElementById('sessionId').value,
         'date': {
-            'from': $('#dateFrom').val(), 
-            'to': $('#dateTo').val()
+            'from': dateFrom,
+            'to': dateTo
         },
         'stepsRange': {
             'from': Number($('#stepsFrom').val()),
             'to': Number($('#stepsTo').val())
         }
     };
+    console.log('request', obj);
     const errorArr = validate(obj);
     const errorMsgEl = $('#errorMsg');
     errorMsgEl.addClass('hidden').empty();
@@ -35,6 +69,10 @@ function regist() {
         // google.script.run.withSuccessHandler(onSuccess).regist(JSON.stringify(obj));
         $.post('./regist', obj).done((data) => {
             console.log('Resigt success:', data);
+            const from = new Date(obj.date.from);
+            const prefix = `./storage/${from.getFullYear()}${('00' + (from.getMonth() + 1)).slice(-2)}`
+            $('#resultLink').attr('href', `${prefix}-${obj.loginId}.png`);
+            $('#resultContent').attr('src', `${prefix}-${obj.loginId}.png`);
             $('#modalSuccess').modal('show');
             offLoading();
         }).fail((err) => {
@@ -76,7 +114,7 @@ function validate(obj) {
         !obj.stepsRange.from ||
         !obj.stepsRange.to
     ) {
-        errorArr.push("なんか入力忘れてます、たぶん");
+        errorArr.push("なんか入力忘れてる気が。。");
     }
     // Validate for Date
     console.log(today.getTime() - dateFrom.getTime(), minDate);
@@ -84,15 +122,15 @@ function validate(obj) {
     if (today.getTime() - dateFrom.getTime() > minDate ||
         today.getTime() - dateTo.getTime() > minDate
     ) {
-        errorArr.push(`登録日付は過去2ヵ月以内でたのんます。。`);
+        errorArr.push(`登録日付は過去2ヵ月以内で。。`);
     }
     if (today.getTime() - dateFrom.getTime() < 0 ||
         today.getTime() - dateTo.getTime() < 0
     ) {
-        errorArr.push(`未来の日付は登録だめ`);
+        errorArr.push(`未来の日付は登録だめ！`);
     }
     if (dateFrom.getTime() > dateTo.getTime()) {
-        errorArr.push(`日付の範囲あやしいかも`);
+        errorArr.push(`日付の範囲あやしいかも。。`);
     }
     // validate for Steps
     if (obj.stepsRange.from < minSteps ||
@@ -100,10 +138,10 @@ function validate(obj) {
         obj.stepsRange.to < minSteps ||
         obj.stepsRange.to > maxSteps
     ) {
-        errorArr.push(`歩数の入力欄が怪しいかも ( ${minSteps}~${maxSteps} )`);
+        errorArr.push(`歩数の入力欄が怪しいかも。。 ( ${minSteps}~${maxSteps} )`);
     }
     if (obj.stepsRange.from >= obj.stepsRange.to) {
-        errorArr.push(`歩数の範囲おかしいかも`);
+        errorArr.push(`歩数の範囲おかしいかも。。`);
     }
     return errorArr;
 }
