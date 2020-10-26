@@ -1,5 +1,6 @@
 import ConfigService from '../../services/configService';
 import moment from 'moment';
+import {config as c, IConfig} from 'node-config-ts';
 
 const config1 = {
     loginId: "test_id",
@@ -23,10 +24,10 @@ describe('Config service as data:config1', () => {
         expect(test1.getPassword()).toBe('test_password');
     });
     it('CASE3: From date should be custom date object.', () => {
-        expect(test1.getFromDate()).toEqual(moment.utc('2020-01-01'));
+        expect(test1.getFromDate()).toEqual(moment.utc('2020-01-01', c.settings.htmlDateFormat));
     });
     it('CASE4: From date should be custom date object.', () => {
-        expect(test1.getToDate()).toEqual(moment.utc('2020-01-02'));
+        expect(test1.getToDate()).toEqual(moment.utc('2020-01-02',  c.settings.htmlDateFormat));
     });
     it('CASE5: Steps range should be {from: 8000, to: 12000}.', () => {
         expect(test1.getStepRange()).toEqual({from: 8000, to: 12000});

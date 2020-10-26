@@ -63,7 +63,7 @@
     "clean": "rm -rf ./dist",
     "build-typescript": "tsc",
     "cp-statics": "cp -r ./src/views ./dist/views",
-    "test": "jest --watch",
+    "test": "jest",
     "postinstall": "node-config-ts"
   },
   "repository": {
