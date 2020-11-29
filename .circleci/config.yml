@@ -48,8 +48,8 @@ jobs:
             - ./*
 
   make-container-and-push-image:
-    executor:
-      name: default
+    # executor:
+    #   name: default
     steps:
       - setup_remote_docker:
           # version: 19.03.8-ce
