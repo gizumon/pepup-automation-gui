@@ -22,7 +22,7 @@ export default class ScrapingService {
 
     async access(url: string) {
         try {
-            await this.page.goto(url, {waitUntil: "networkidle2"});
+            await this.page.goto(url, {waitUntil: "networkidle2", timeout: 300000});
         } catch (e) {
             await this.closeBrowser();
             console.error(`ERROR::[Message]Failed to access::[URL]${url}::[Error]`, e);
