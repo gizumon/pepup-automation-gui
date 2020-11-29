@@ -6,6 +6,10 @@ executors:
     working_directory: ~/workspace
     docker:
       - image: node:10.15
+  docker-builder:
+    working_directory: ~/workspace
+    docker:
+      - image: docker:17.07.0-ce-git
 
 commands:
   restore_fr_npm:
@@ -48,8 +52,8 @@ jobs:
             - ./*
 
   make-container-and-push-image:
-    # executor:
-    #   name: default
+    executor:
+      name: docker-builder
     steps:
       - setup_remote_docker:
           # version: 19.03.8-ce
