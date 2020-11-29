@@ -47,13 +47,13 @@ jobs:
             - .git/*
             - ./*
 
-  build-and-push-image:
+  make-container-and-push-image:
     executor:
       name: default
     steps:
       - setup_remote_docker:
-        version: 17.11.0-ce
-        docker_layer_caching: true
+          version: 17.11.0-ce
+          docker_layer_caching: true
       - checkout
       - attach_workspace:
           at: ~/workspace
@@ -61,17 +61,23 @@ jobs:
           name: Show current dir
           command: pwd && ls -l && ls -l ./
       - run:
+          name: Show environments
+          command: |
+            echo "${DOCKER_USER}"
+            echo "${CIRCLE_PROJECT_USERNAME}"
+            echo "${CIRCLE_PROJECT_REPONAME}"
+      - run:
           name: Build container image
-          command: docker build -t $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:latest . 
+          command: docker build -t ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest . 
       - run:
           name: Tag to latest
-          command: docker tag $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:latest $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME:$CIRCLE_TAG
+          command: docker tag ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:$CIRCLE_TAG
       - run:
           name: Docker Login
           command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
       - run:
           name: Push image to registory
-          command: docker push $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+          command: docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
 
 workflows:
   pull-request:
@@ -80,6 +86,7 @@ workflows:
       - build-source:
           requires:
             - setup
-      - build-and-push-image:
+      - make-container-and-push-image:
+          context: DOCKER
           requires:
             - build-source
